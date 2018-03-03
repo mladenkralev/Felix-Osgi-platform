@@ -4,6 +4,8 @@ import groovy.io.FileType
 import groovy.util.logging.Slf4j
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.artifacts.ConfigurationContainer
+import org.gradle.api.artifacts.dsl.DependencyHandler
 
 import java.nio.file.Files
 import java.nio.file.Path
@@ -17,94 +19,112 @@ import java.nio.file.Paths
    With the groovy.util.logging.Slf4j annotation we declare a dependency on a SLF4J logger instance which is
    then available through the log variable.
  */
+
 @Slf4j
 class RunEqunoxPlugin implements Plugin<Project> {
+
+    private ConfigurationContainer configurations
+    private DependencyHandler dependencies
 
     void apply(Project project) {
         project.task('startContainer') {
             doLast {
-                List<File> listOfFilesInBinaryFolder  = getFilesInBinaryFolder(project)
+                init(project)
 
-                createContainerFolder(project)
+                addingOSGIDependency()
 
-                copyToBuildDir(listOfFilesInBinaryFolder, project)
+                getConfiguration(project)
 
-                createBatScript(project)
+                printBundles(project)
             }
         }.dependsOn("build")
     }
 
-    List<File> getFilesInBinaryFolder(Project project) {
-        Path containerFolderPath = Paths.get("" +
-                "${project.rootDir}" +
-                "${File.separator}binary")
+    void getConfiguration(Project project) {
+        ConfigurationContainer configContainer = project.getConfigurations()
+        File bundlesInfo= new File(project.buildDir.absolutePath + "\\configuration\\config.ini")
+        String osgiBundles = configurations.getByName("core-ext").asPath.replace(";","@1:start,").replaceAll(".jar","")
 
-        File binaryFolder = new File(containerFolderPath.toString())
 
-        log.info("Binary folder found: $binaryFolder ")
-        assert binaryFolder.exists() , "Binary folder doesn't exist!"
+        Properties properties = new Properties()
 
-        log.info("Binary folder files:")
+        properties.put("osgi.bundles", osgiBundles )
+        properties.put("eclipse.ignoreApp", "true")
+        properties.put("eclipse.consoleLog", "true")
+        properties.put("eclipse.ignoreApp", "true")
 
-        def listOfFilesInBinaryFolder = []
-        binaryFolder.eachFileRecurse(FileType.FILES) { file ->
-            listOfFilesInBinaryFolder << file
-            log.info("Added in list: $file ")
+        bundlesInfo.getParentFile().mkdirs(); // correct!
+        if (!bundlesInfo.exists()) {
+            bundlesInfo.createNewFile();
         }
 
-        log.info("Items in folder: $listOfFilesInBinaryFolder.size")
-        assert listOfFilesInBinaryFolder.size() == 11, "Missing files in binary directory"
+        OutputStream outputStream = new FileOutputStream(bundlesInfo)
+        properties.store(outputStream, "This is build generated file.")
 
-        return listOfFilesInBinaryFolder
+        createBatScript(project)
+
     }
 
-    boolean copyToBuildDir(List<File> listOfFilesInBinaryFolder, Project project) {
-        Path containerFolderPath = Paths.get("${project.rootDir}" +
-                "${File.separator}build" +
-                "${File.separator}libs" +
-                "${File.separator}container")
+    void init(Project project) {
+        configurations = project.configurations
+        dependencies = project.dependencies
 
-        listOfFilesInBinaryFolder.each {file ->
-            Files.copy(file.toPath(), containerFolderPath.resolve(file.getName()))
-            log.info("File copied from $file.path to $containerFolderPath")
+    }
+
+    void addingOSGIDependency() {
+        configurations.create 'core'
+        dependencies.add( 'core' , [group: 'org.eclipse.equinox', name: 'org.eclipse.equinox.simpleconfigurator', version: '1.0.400.v20130327-2119'])
+
+
+        configurations.create 'core-ext'
+
+//        dependencies.add('core-ext', [group: 'org.eclipse.equinox', name: 'org.eclipse.equinox.app', version: '1.3.100'])
+//        dependencies.add('core-ext', [group: 'org.eclipse.platform', name: 'org.eclipse.equinox.p2.publisher', version: '1.4.200'])
+//        dependencies.add( 'core-ext', [group: 'org.eclipse.equinox', name: 'org.eclipse.equinox.p2.director', version: '2.3.0.v20130526-0335'])
+//        dependencies.add('core-ext', [group: 'org.eclipse.equinox', name: 'org.eclipse.equinox.common', version: '3.6.0'])
+
+        dependencies.add('core-ext', [group: 'org.eclipse.core', name: 'org.eclipse.core.contenttype', version: '3.4.100'])
+        dependencies.add('core-ext', [group: 'org.eclipse.core', name: 'org.eclipse.core.jobs', version: '3.5.100'])
+
+        dependencies.add('core-ext', [group: 'org.apache.felix', name: 'org.apache.felix.gogo.runtime', version: '0.8.0'])
+        dependencies.add('core-ext', [group: 'org.apache.felix', name: 'org.apache.felix.gogo.shell', version: '0.8.0'])
+        dependencies.add('core-ext', [group: 'org.apache.felix', name: 'org.apache.felix.gogo.command', version: '0.8.0'])
+
+        dependencies.add('core-ext', [group: 'org.eclipse.equinox', name: 'org.eclipse.equinox.preferences', version: '3.4.1'])
+        dependencies.add('core-ext', [group: 'org.eclipse.equinox', name: 'org.eclipse.equinox.registry', version: '3.5.101'])
+        dependencies.add('core-ext', [group: 'org.apache.felix', name: 'org.apache.felix.gogo.runtime', version: '0.8.0'])
+
+        configurations.create("kernel")
+        dependencies.add('kernel', [group: 'org.eclipse.osgi', name: 'org.eclipse.osgi', version: '3.7.1'])
+    }
+
+    void printBundles(Project project) {
+        project.getConfigurations().each {
+            println("Configuration: $it.name")
+            println(it.asPath)
         }
-    }
-
-    boolean createContainerFolder(Project project) {
-        Path containerFolderPath = Paths.get("${project.rootDir}" +
-                "${File.separator}build" +
-                "${File.separator}libs" +
-                "${File.separator}container")
-
-        File destinationFolder = new File(containerFolderPath.toString())
-
-        assert !destinationFolder.exists() , "Destination folder is already created!"
-
-        destinationFolder.mkdir()
-
-        assert destinationFolder.exists() , "Destination folder wasn't created!"
     }
 
     boolean createBatScript(Project project) {
         Path folderRuntimePath = Paths.get(
                 "${project.rootDir}" +
-                "${File.separator}build" +
-                "${File.separator}runtime")
+                        "${File.separator}build")
 
         File directoryBatFile = new File(folderRuntimePath.toString())
-        assert !directoryBatFile.exists() , "$directoryBatFile already exists!"
 
         directoryBatFile.mkdir()
-        assert directoryBatFile.exists() , "$directoryBatFile dir wasn't created!"
 
         Path batFilePath = Paths.get(
                 "${project.rootDir}" +
-                "${File.separator}build" +
-                "${File.separator}runtime" +
-                "${File.separator}start.bat")
+                        "${File.separator}build" +
+                        "${File.separator}start.bat")
 
         File batFile = new File(batFilePath.toString())
         batFile.createNewFile()
-        assert batFile.exists() , "$batFile wasn't created!"
+        assert batFile.exists(), "$batFile wasn't created!"
+
+        String osgiCoreBundlePath = configurations.getByName("kernel").asPath
+
+        batFile.setText("java -jar $osgiCoreBundlePath -console -configuration configuration".toString())
     }
 }
