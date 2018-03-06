@@ -6,10 +6,12 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.artifacts.dsl.DependencyHandler
+import org.gradle.api.tasks.Copy
 
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.nio.file.StandardCopyOption
 
 /**
  * Created by mladen on 11/18/2017.
@@ -35,7 +37,9 @@ class RunEqunoxPlugin implements Plugin<Project> {
 
                 getConfiguration(project)
 
-                printBundles(project)
+                copyToLocal(project)
+
+//                printBundles(project)
             }
         }.dependsOn("build")
     }
@@ -51,7 +55,7 @@ class RunEqunoxPlugin implements Plugin<Project> {
         properties.put("osgi.bundles", osgiBundles )
         properties.put("eclipse.ignoreApp", "true")
         properties.put("eclipse.consoleLog", "true")
-        properties.put("eclipse.ignoreApp", "true")
+        properties.put("osgi.noShutdown", "true")
 
         bundlesInfo.getParentFile().mkdirs(); // correct!
         if (!bundlesInfo.exists()) {
@@ -68,34 +72,25 @@ class RunEqunoxPlugin implements Plugin<Project> {
     void init(Project project) {
         configurations = project.configurations
         dependencies = project.dependencies
-
     }
 
     void addingOSGIDependency() {
         configurations.create 'core'
-        dependencies.add( 'core' , [group: 'org.eclipse.equinox', name: 'org.eclipse.equinox.simpleconfigurator', version: '1.0.400.v20130327-2119'])
 
+        configurations.create 'core-ext', {
+                it.transitive = false
+        }
 
-        configurations.create 'core-ext'
+        dependencies.add('core-ext', [group: 'org.apache.felix', name: 'org.apache.felix.gogo.runtime', version: '0.12.0'])
+        dependencies.add('core-ext', [group: 'org.apache.felix', name: 'org.apache.felix.gogo.shell', version: '0.12.0'])
+        dependencies.add('core-ext', [group: 'org.apache.felix', name: 'org.apache.felix.gogo.command', version: '0.12.0'])
 
-//        dependencies.add('core-ext', [group: 'org.eclipse.equinox', name: 'org.eclipse.equinox.app', version: '1.3.100'])
-//        dependencies.add('core-ext', [group: 'org.eclipse.platform', name: 'org.eclipse.equinox.p2.publisher', version: '1.4.200'])
-//        dependencies.add( 'core-ext', [group: 'org.eclipse.equinox', name: 'org.eclipse.equinox.p2.director', version: '2.3.0.v20130526-0335'])
-//        dependencies.add('core-ext', [group: 'org.eclipse.equinox', name: 'org.eclipse.equinox.common', version: '3.6.0'])
+        dependencies.add('core-ext', [group: 'org.eclipse.equinox', name: 'org.eclipse.equinox.console', version: '1.0.0.v20120522-1841' ])
 
-        dependencies.add('core-ext', [group: 'org.eclipse.core', name: 'org.eclipse.core.contenttype', version: '3.4.100'])
-        dependencies.add('core-ext', [group: 'org.eclipse.core', name: 'org.eclipse.core.jobs', version: '3.5.100'])
-
-        dependencies.add('core-ext', [group: 'org.apache.felix', name: 'org.apache.felix.gogo.runtime', version: '0.8.0'])
-        dependencies.add('core-ext', [group: 'org.apache.felix', name: 'org.apache.felix.gogo.shell', version: '0.8.0'])
-        dependencies.add('core-ext', [group: 'org.apache.felix', name: 'org.apache.felix.gogo.command', version: '0.8.0'])
-
-        dependencies.add('core-ext', [group: 'org.eclipse.equinox', name: 'org.eclipse.equinox.preferences', version: '3.4.1'])
-        dependencies.add('core-ext', [group: 'org.eclipse.equinox', name: 'org.eclipse.equinox.registry', version: '3.5.101'])
-        dependencies.add('core-ext', [group: 'org.apache.felix', name: 'org.apache.felix.gogo.runtime', version: '0.8.0'])
-
-        configurations.create("kernel")
-        dependencies.add('kernel', [group: 'org.eclipse.osgi', name: 'org.eclipse.osgi', version: '3.7.1'])
+        configurations.create("kernel") {
+            it.transitive = false
+        }
+        dependencies.add('kernel', [group: 'org.eclipse', name: 'osgi', version: '3.10.0-v20140606-1445'])
     }
 
     void printBundles(Project project) {
@@ -104,6 +99,22 @@ class RunEqunoxPlugin implements Plugin<Project> {
             println(it.asPath)
         }
     }
+
+    void copyToLocal(Project project) {
+        copyConfgiurationToLocal(project, "core-ext")
+        copyConfgiurationToLocal(project, "kernel")
+        copyConfgiurationToLocal(project, "core")
+    }
+
+    private copyConfgiurationToLocal(Project project, String configuration) {
+        project.copy {
+            it.from configurations.getByName(configuration)
+
+            it.into "$project.buildDir\\libs\\osgi\\$configuration"
+            it.include "*.*"
+        }
+    }
+
 
     boolean createBatScript(Project project) {
         Path folderRuntimePath = Paths.get(
