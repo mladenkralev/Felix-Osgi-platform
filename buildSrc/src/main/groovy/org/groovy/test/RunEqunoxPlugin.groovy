@@ -1,17 +1,16 @@
 package org.groovy.test
 
-import groovy.io.FileType
 import groovy.util.logging.Slf4j
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.artifacts.dsl.DependencyHandler
-import org.gradle.api.tasks.Copy
 
-import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
-import java.nio.file.StandardCopyOption
+import java.util.jar.Attributes
+import java.util.jar.JarInputStream
+import java.util.jar.Manifest
 
 /**
  * Created by mladen on 11/18/2017.
@@ -39,20 +38,18 @@ class RunEqunoxPlugin implements Plugin<Project> {
 
                 copyToLocal(project)
 
-//                printBundles(project)
             }
         }.dependsOn("build")
     }
 
     void getConfiguration(Project project) {
-        ConfigurationContainer configContainer = project.getConfigurations()
-        File bundlesInfo= new File(project.buildDir.absolutePath + "\\configuration\\config.ini")
-        String osgiBundles = configurations.getByName("core-ext").asPath.replace(";","@1:start,").replaceAll(".jar","")
+        File bundlesInfo = new File(project.buildDir.absolutePath + "\\configuration\\config.ini")
 
+        String osgiBundles = getCoreBundles()
 
         Properties properties = new Properties()
 
-        properties.put("osgi.bundles", osgiBundles )
+        properties.put("osgi.bundles", osgiBundles.toString())
         properties.put("eclipse.ignoreApp", "true")
         properties.put("eclipse.consoleLog", "true")
         properties.put("osgi.noShutdown", "true")
@@ -69,6 +66,31 @@ class RunEqunoxPlugin implements Plugin<Project> {
 
     }
 
+    String getCoreBundles() {
+        def osgiBundles = StringBuilder.newInstance()
+        configurations.getByName("core-ext").findResults { dependencyJar ->
+            dependencyJar.withInputStream { inputStream ->
+                JarInputStream jarInputStream = new JarInputStream(inputStream)
+                Manifest manifest = jarInputStream.getManifest();
+
+                if (manifest != null) {
+                    if (manifest.mainAttributes.containsKey(new Attributes.Name('Fragment-Host'))) {
+                        osgiBundles <<= replaceLast(dependencyJar.path,".+\\.jar", "")
+                        println("I have found fragment!" + dependencyJar.path)
+                    } else {
+                        println(replaceLast(dependencyJar.path,".+\\.jar", ""))
+                        osgiBundles <<= replaceLast(dependencyJar.path,".+\\.jar", "")
+                    }
+                }
+            }
+        }
+        return osgiBundles.toString()
+    }
+
+    String replaceLast(String text, String regex, String replacement) {
+        return text.replaceFirst("(?s)(.*)" + regex, '$1' + replacement);
+    }
+
     void init(Project project) {
         configurations = project.configurations
         dependencies = project.dependencies
@@ -78,14 +100,66 @@ class RunEqunoxPlugin implements Plugin<Project> {
         configurations.create 'core'
 
         configurations.create 'core-ext', {
-                it.transitive = false
+            it.transitive = false
         }
 
         dependencies.add('core-ext', [group: 'org.apache.felix', name: 'org.apache.felix.gogo.runtime', version: '0.12.0'])
         dependencies.add('core-ext', [group: 'org.apache.felix', name: 'org.apache.felix.gogo.shell', version: '0.12.0'])
         dependencies.add('core-ext', [group: 'org.apache.felix', name: 'org.apache.felix.gogo.command', version: '0.12.0'])
 
-        dependencies.add('core-ext', [group: 'org.eclipse.equinox', name: 'org.eclipse.equinox.console', version: '1.0.0.v20120522-1841' ])
+        dependencies.add('core-ext', [group: 'org.eclipse.equinox', name: 'org.eclipse.equinox.console', version: '1.0.0.v20120522-1841'])
+
+        dependencies.add('core-ext', [group: 'org.eclipse.equinox', name: 'org.eclipse.equinox.p2.artifact.repository', version: '1.1.200.v20130515-2028'])
+        dependencies.add('core-ext', [group: 'org.eclipse.equinox', name: 'org.eclipse.equinox.p2.console', version: '1.0.300.v20130327-2119'])
+        dependencies.add('core-ext', [group: 'org.eclipse.equinox', name: 'org.eclipse.equinox.p2.core', version: '2.3.0.v20130327-2119'])
+        dependencies.add('core-ext', [group: 'org.eclipse.equinox', name: 'org.eclipse.equinox.p2.director.app', version: '1.0.300.v20130819-1621'])
+        dependencies.add('core-ext', [group: 'org.eclipse.equinox', name: 'org.eclipse.equinox.p2.director', version: '2.3.0.v20130526-0335'])
+        dependencies.add('core-ext', [group: 'org.eclipse.equinox', name: 'org.eclipse.equinox.p2.directorywatcher', version: '1.0.300.v20130327-2119'])
+        dependencies.add('core-ext', [group: 'org.eclipse.platform', name: 'org.eclipse.equinox.p2.discovery.compatibility', version: '1.0.201'])
+        dependencies.add('core-ext', [group: 'org.eclipse.platform', name: 'org.eclipse.equinox.p2.discovery', version: '1.0.400' ])
+        dependencies.add('core-ext', [group: 'org.eclipse.equinox', name: 'org.eclipse.equinox.p2.engine', version: '2.3.0.v20130526-2122' ])
+        dependencies.add('core-ext', [group: 'org.eclipse.equinox', name: 'org.eclipse.equinox.p2.extensionlocation', version: '1.2.100.v20130327-2119'])
+        dependencies.add('core-ext', [group: 'org.eclipse.equinox', name: 'org.eclipse.equinox.p2.garbagecollector', version: '1.0.200.v20130327-2119'])
+        dependencies.add('core-ext', [group: 'org.eclipse.platform', name: 'org.eclipse.equinox.p2.jarprocessor', version: '1.0.500'])
+        dependencies.add('core-ext', [group: 'org.eclipse.platform', name: 'org.eclipse.equinox.p2.metadata.repository', version: '1.2.300'])
+        dependencies.add('core-ext', [group: 'org.eclipse.equinox', name: 'org.eclipse.equinox.p2.metadata', version: '2.1.0.v20110510'])
+        dependencies.add('core-ext', [group: 'org.eclipse.platform', name: 'org.eclipse.equinox.p2.operations', version: '2.4.200'])
+        dependencies.add('core-ext', [group: 'org.eclipse.equinox', name: 'org.eclipse.equinox.p2.publisher.eclipse', version: '1.0.0.v20110511'])
+        dependencies.add('core-ext', [group: 'org.eclipse.equinox', name: 'org.eclipse.equinox.p2.publisher', version: '1.2.0.v20110511'])
+        dependencies.add('core-ext', [group: 'org.eclipse.equinox', name: 'org.eclipse.equinox.p2.reconciler.dropins', version: '1.1.100.v20110510'])
+        dependencies.add('core-ext', [group: 'org.eclipse.equinox', name: 'org.eclipse.equinox.p2.repository.tools', version: '2.0.100.v20110512-1320'])
+        dependencies.add('core-ext', [group: 'org.eclipse.equinox', name: 'org.eclipse.equinox.p2.repository', version: '2.1.0.v20110601'])
+        dependencies.add('core-ext', [group: 'org.eclipse.equinox', name: 'org.eclipse.equinox.p2.touchpoint.eclipse', version: '2.1.0.v20110511'])
+        dependencies.add('core-ext', [group: 'org.eclipse.equinox', name: 'org.eclipse.equinox.p2.touchpoint.natives', version: '1.0.300.v20110502-1955'])
+        dependencies.add('core-ext', [group: 'org.eclipse.platform', name: 'org.eclipse.equinox.p2.transport.ecf', version: '1.1.300' ])
+        dependencies.add('core-ext', [group: 'org.eclipse.ecf', name: 'org.eclipse.ecf', version: '3.8.0' ])
+        dependencies.add('core-ext', [group: 'org.eclipse.platform', name: 'org.eclipse.equinox.p2.ui.discovery', version: '1.0.201'])
+        dependencies.add('core-ext', [group: 'org.eclipse.platform', name: 'org.eclipse.equinox.p2.ui.importexport', version: '1.1.200'])
+        dependencies.add('core-ext', [group: 'org.eclipse.platform', name: 'org.eclipse.equinox.p2.ui.importexport', version: '1.1.200'])
+        dependencies.add('core-ext', [group: 'org.eclipse.platform', name: 'org.eclipse.equinox.p2.ui.sdk.scheduler', version: '1.3.0'])
+        dependencies.add('core-ext', [group: 'org.eclipse.platform', name: 'org.eclipse.equinox.p2.ui.sdk', version: '1.0.400'])
+        dependencies.add('core-ext', [group: 'org.eclipse.platform', name: 'org.eclipse.equinox.p2.ui', version: '2.4.100'])
+        dependencies.add('core-ext', [group: 'org.eclipse.platform', name: 'org.eclipse.equinox.p2.updatechecker', version: '1.1.300'])
+        dependencies.add('core-ext', [group: 'org.eclipse.equinox', name: 'org.eclipse.equinox.p2.updatesite', version: '1.0.300.v20110510'])
+        dependencies.add('core-ext', [group: 'org.eclipse.equinox', name: 'org.eclipse.equinox.security', version: '1.2.0.v20130424-1801'])
+        dependencies.add('core-ext', [group: 'com.ibm.icu', name: 'icu4j', version: '4.0.1'])
+        dependencies.add('core-ext', [ group: 'org.eclipse.equinox', name: 'org.eclipse.equinox.frameworkadmin', version: '2.0.100.v20130327-2119'])
+
+        dependencies.add('core-ext', [group: 'org.eclipse.core', name: 'org.eclipse.core.runtime', version: '3.6.0.v20100505'])
+        dependencies.add('core-ext', [group: 'org.eclipse.equinox', name: 'org.eclipse.equinox.registry', version: '3.5.101'])
+        dependencies.add('core-ext', [group: 'org.eclipse.equinox', name: 'org.eclipse.equinox.preferences', version: '3.4.1'])
+        dependencies.add('core-ext', [group: 'org.eclipse.core', name: 'org.eclipse.core.contenttype', version: '3.4.100'])
+        dependencies.add('core-ext', [group: 'org.eclipse.core', name: 'org.eclipse.core.runtime.compatibility.auth', version: '3.2.200.v20100517'])
+        dependencies.add('core-ext', [group: 'org.eclipse.equinox', name: 'org.eclipse.equinox.app', version: '1.3.100'])
+        dependencies.add('core-ext', [group: 'org.eclipse.core', name: 'jobs', version: '3.6.0-v20140424-0053'])
+        dependencies.add('core-ext', [group: 'org.eclipse.equinox', name: 'org.eclipse.equinox.common', version: '3.6.0'])
+
+
+        configurations.getByName('core-ext').each {
+            println(it)
+        }
+
+
 
         configurations.create("kernel") {
             it.transitive = false
