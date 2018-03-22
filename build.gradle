@@ -1,17 +1,21 @@
-group 'groovy-pluguin'
-
 import org.groovy.test.RunEqunoxPlugin
 
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'osgi'
+}
+
 apply plugin: 'groovy'
-apply plugin: 'java'
 apply plugin: RunEqunoxPlugin
 
 sourceCompatibility = 1.8
-
 repositories {
     mavenCentral()
     maven {
         url "http://dist.wso2.org/maven2/"
+    }
+    maven {
+        url "http://www.datanucleus.org/downloads/maven2/"
     }
 }
 
@@ -22,10 +26,9 @@ dependencies {
     compile localGroovy()
     compile gradleApi()
 
-
-
-
+    compile project (":modules:com.test.bundle.mladen")
 }
+
 
 
 

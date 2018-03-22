@@ -1,4 +1,4 @@
 rootProject.name = 'groovy-pluguin'
 
-include("modules:com.test.bundle.mladen")
+include(":modules:com.test.bundle.mladen")
 
