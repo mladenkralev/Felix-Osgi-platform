@@ -167,17 +167,15 @@ class RunEqunoxPlugin implements Plugin<Project> {
         dependencies.add( 'core-ext',[group: 'org.osgi', name: 'org.osgi.service.component', version: '1.3.0'])
         dependencies.add( 'core-ext',[group: 'org.osgi', name: 'org.osgi.util.promise', version: '1.0.0'])
         dependencies.add( 'core-ext', [group: 'org.osgi', name: 'org.osgi.util.function', version: '1.0.0'])
-
+        
         dependencies.add( 'core-ext',[group: 'org.eclipse.platform', name: 'org.eclipse.equinox.p2.touchpoint.eclipse', version: '2.1.400'])
         dependencies.add( 'core-ext',[group: 'org.eclipse.platform', name: 'org.eclipse.equinox.p2.touchpoint.natives', version: '1.2.100'])
         dependencies.add( 'core-ext',[group: 'org.eclipse.platform', name: 'org.eclipse.equinox.frameworkadmin', version: '2.0.300'])
         dependencies.add( 'core-ext',[group: 'org.eclipse.platform', name: 'org.eclipse.equinox.frameworkadmin.equinox', version: '1.0.700'])
         dependencies.add( 'core-ext',[group: 'org.eclipse.platform', name: 'org.eclipse.equinox.p2.garbagecollector', version: '1.0.300'])
         dependencies.add( 'core-ext',[group: 'org.eclipse.platform', name: 'org.eclipse.osgi.compatibility.state', version: '1.0.200'])
-        dependencies.add( 'core-ext',[group: 'org.eclipse.platform', name: 'org.eclipse.equinox.p2.transport.ecf', version: '1.1.201'])
         dependencies.add( 'core-ext',[group: 'org.eclipse.ecf', name: 'org.eclipse.ecf', version: '3.1.300.v20110531-2218'])
         dependencies.add( 'core-ext',[group: 'org.eclipse.platform', name: 'org.eclipse.core.net', version: '1.3.0'])
-
         dependencies.add( 'core-ext',[group: 'org.eclipse.ecf', name: 'org.eclipse.ecf.identity', version: '3.8.0'])
         dependencies.add( 'core-ext',[group: 'org.tukaani', name: 'xz', version: '1.5'])
         dependencies.add( 'core-ext',[group: 'org.eclipse', name: 'org.sat4j.core', version: '2.3.5.v201308161310'])
