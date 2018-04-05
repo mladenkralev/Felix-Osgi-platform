@@ -1,10 +1,22 @@
 import org.groovy.test.RunEqunoxPlugin
 
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "com.gradle.publish:plugin-publish-plugin:0.9.10"
+    }
+}
+
 subprojects {
     apply plugin: 'java'
     apply plugin: 'osgi'
 }
 
+apply plugin: "com.gradle.plugin-publish"
 apply plugin: 'groovy'
 apply plugin: RunEqunoxPlugin
 
@@ -17,7 +29,12 @@ repositories {
     maven {
         url "http://www.datanucleus.org/downloads/maven2/"
     }
+    jcenter()
 }
+
+version = "1.2"
+group = "com.foo.myplugin"
+
 
 dependencies {
     compile 'org.codehaus.groovy:groovy-all:2.4.7'
@@ -25,8 +42,20 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile localGroovy()
     compile gradleApi()
+}
 
-    compile project (":modules:com.test.bundle.mladen")
+pluginBundle {
+    website = 'http://www.gradle.org/'
+    vcsUrl = 'https://github.com/mladenkralev/Felix-Osgi-platform'
+    description = 'Greetings from here!'
+    tags = ['greetings', 'salutations']
+
+    plugins {
+        greetingsPlugin {
+            id = 'org.samples.greeting'
+            displayName = 'Gradle Greeting plugin'
+        }
+    }
 }
 
 

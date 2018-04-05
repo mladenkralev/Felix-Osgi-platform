@@ -167,7 +167,8 @@ class RunEqunoxPlugin implements Plugin<Project> {
         dependencies.add( 'core-ext',[group: 'org.osgi', name: 'org.osgi.service.component', version: '1.3.0'])
         dependencies.add( 'core-ext',[group: 'org.osgi', name: 'org.osgi.util.promise', version: '1.0.0'])
         dependencies.add( 'core-ext', [group: 'org.osgi', name: 'org.osgi.util.function', version: '1.0.0'])
-        
+        dependencies.add( 'core-ext', [group: 'org.apache.felix', name: 'org.apache.felix.scr', version: '2.0.12'])
+
         dependencies.add( 'core-ext',[group: 'org.eclipse.platform', name: 'org.eclipse.equinox.p2.touchpoint.eclipse', version: '2.1.400'])
         dependencies.add( 'core-ext',[group: 'org.eclipse.platform', name: 'org.eclipse.equinox.p2.touchpoint.natives', version: '1.2.100'])
         dependencies.add( 'core-ext',[group: 'org.eclipse.platform', name: 'org.eclipse.equinox.frameworkadmin', version: '2.0.300'])
@@ -184,7 +185,11 @@ class RunEqunoxPlugin implements Plugin<Project> {
         configurations.create("kernel") {
             it.transitive = false
         }
+
         dependencies.add('kernel', [group: 'org.eclipse', name: 'osgi', version: '3.10.0-v20140606-1445'])
+
+        dependencies.add( 'compileOnly', [group: 'org.osgi', name: 'org.osgi.service.component.annotations', version: '1.3.0'])
+
     }
 
     void copyToLocal(Project project) {
