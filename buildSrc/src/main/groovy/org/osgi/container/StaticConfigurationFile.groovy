@@ -54,7 +54,8 @@ class StaticConfigurationFile {
         dependencies.add( 'core-ext',[group: 'org.eclipse.platform', name: 'org.eclipse.equinox.p2.artifact.repository', version: '1.1.600'])
         dependencies.add( 'core-ext',[group: 'org.eclipse.platform', name: 'org.eclipse.equinox.p2.jarprocessor', version: '1.0.500'])
 
-        // GOGO Shell + equinox console
+
+                                       // GOGO Shell + equinox console
         dependencies.add('core-ext', [group: 'org.apache.felix', name: 'org.apache.felix.gogo.runtime', version: '0.12.0'])
         dependencies.add('core-ext', [group: 'org.apache.felix', name: 'org.apache.felix.gogo.shell', version: '0.12.0'])
         dependencies.add('core-ext', [group: 'org.apache.felix', name: 'org.apache.felix.gogo.command', version: '0.12.0'])
@@ -70,32 +71,37 @@ class StaticConfigurationFile {
         // ECLIPSE EQUINOX
         dependencies.add('core-ext', [group: 'org.eclipse.platform', name: 'org.eclipse.equinox.common', version: '3.9.0'])
         dependencies.add('core-ext', [group: 'org.eclipse.platform', name: 'org.eclipse.equinox.registry', version: '3.7.0'])
-        dependencies.add( 'core-ext',[group: 'org.eclipse.platform', name: 'org.eclipse.equinox.app', version: '1.3.400'])
-        dependencies.add( 'core-ext',[group: 'org.eclipse.platform', name: 'org.eclipse.equinox.supplement', version: '1.6.100'])
-        dependencies.add( 'core-ext',[group: 'org.eclipse.platform', name: 'org.eclipse.equinox.security', version: '1.2.200'])
-        dependencies.add( 'core-ext',[group: 'org.eclipse.platform', name: 'org.eclipse.equinox.frameworkadmin', version: '2.0.300'])
-        dependencies.add( 'core-ext',[group: 'org.eclipse.platform', name: 'org.eclipse.equinox.frameworkadmin.equinox', version: '1.0.700'])
-        dependencies.add( 'core-ext',[group: 'org.eclipse.platform', name: 'org.eclipse.equinox.util', version: '1.0.500'])
-        dependencies.add( 'core-ext',[group: 'org.eclipse.platform', name: 'org.eclipse.equinox.simpleconfigurator', version: '1.1.200'])
-        dependencies.add( 'core-ext',[group: 'org.eclipse.platform', name: 'org.eclipse.equinox.simpleconfigurator.manipulator', version: '2.0.200'])
-        dependencies.add( 'core-ext',[group: 'org.eclipse.platform', name:'org.eclipse.equinox.console', version: '1.1.200']) {
+        dependencies.add('core-ext', [group: 'org.eclipse.platform', name: 'org.eclipse.equinox.app', version: '1.3.400'])
+        dependencies.add('core-ext', [group: 'org.eclipse.platform', name: 'org.eclipse.equinox.supplement', version: '1.6.100'])
+        dependencies.add('core-ext', [group: 'org.eclipse.platform', name: 'org.eclipse.equinox.security', version: '1.2.200'])
+        dependencies.add('core-ext', [group: 'org.eclipse.platform', name: 'org.eclipse.equinox.frameworkadmin', version: '2.0.300'])
+        dependencies.add('core-ext', [group: 'org.eclipse.platform', name: 'org.eclipse.equinox.frameworkadmin.equinox', version: '1.0.700'])
+        dependencies.add('core-ext', [group: 'org.eclipse.platform', name: 'org.eclipse.equinox.util', version: '1.0.500'])
+        dependencies.add('core-ext', [group: 'org.eclipse.platform', name: 'org.eclipse.equinox.simpleconfigurator', version: '1.1.200'])
+        dependencies.add('core-ext', [group: 'org.eclipse.platform', name: 'org.eclipse.equinox.simpleconfigurator.manipulator', version: '2.0.200'])
+        dependencies.add('core-ext', [group: 'org.eclipse.platform', name:'org.eclipse.equinox.console', version: '1.1.200']) {
             exclude group: 'org.apache.felix'
         }
 
-        dependencies.add( 'core-ext',[group: 'org.eclipse.platform', name: 'org.eclipse.osgi.compatibility.state', version: '1.0.200'])
+        dependencies.add('core-ext', [group: 'org.eclipse.platform', name: 'org.eclipse.osgi.compatibility.state', version: '1.0.200'])
 
-        dependencies.add( 'core-ext',[group: 'org.osgi', name: 'org.osgi.service.cm', version: '1.5.0'])
-        dependencies.add( 'core-ext',[group: 'org.osgi', name: 'org.osgi.service.component', version: '1.3.0'])
-        dependencies.add( 'core-ext',[group: 'org.osgi', name: 'org.osgi.util.promise', version: '1.0.0'])
-        dependencies.add( 'core-ext',[group: 'org.osgi', name: 'org.osgi.util.function', version: '1.0.0'])
-        dependencies.add( 'core-ext',[group: 'org.apache.felix', name: 'org.apache.felix.scr', version: '2.0.12'])
-        dependencies.add( 'core-ext',[group: 'org.apache.felix', name: 'org.apache.felix.scr', version: '2.0.6'])
+        dependencies.add('core-ext', [group: 'org.osgi', name: 'org.osgi.service.cm', version: '1.5.0'])
+        dependencies.add('core-ext', [group: 'org.osgi', name: 'org.osgi.service.component', version: '1.3.0'])
+        dependencies.add('core-ext', [group: 'org.osgi', name: 'org.osgi.util.promise', version: '1.0.0'])
+        dependencies.add('core-ext', [group: 'org.osgi', name: 'org.osgi.util.function', version: '1.0.0'])
+        dependencies.add('core-ext', [group: 'org.apache.felix', name: 'org.apache.felix.scr', version: '2.0.12'])
+        dependencies.add('core-ext', [group: 'org.apache.felix', name: 'org.apache.felix.scr', version: '2.0.6'])
 
-        dependencies.add( 'core-ext',[group: 'org.eclipse.ecf', name: 'org.eclipse.ecf', version: '3.1.300.v20110531-2218'])
-        dependencies.add( 'core-ext',[group: 'org.eclipse.ecf', name: 'org.eclipse.ecf.identity', version: '3.8.0'])
-        dependencies.add( 'core-ext',[group: 'org.tukaani', name: 'xz', version: '1.5'])
-        dependencies.add( 'core-ext',[group: 'org.eclipse', name: 'org.sat4j.core', version: '2.3.5.v201308161310'])
-        dependencies.add( 'core-ext',[group: 'org.eclipse', name: 'org.sat4j.pb', version: '2.3.5.v201308161310'])
+        dependencies.add('core-ext', [group: 'org.eclipse.ecf', name: 'org.eclipse.ecf', version: '3.1.300.v20110531-2218'])
+        dependencies.add('core-ext', [group: 'org.eclipse.ecf', name: 'org.eclipse.ecf.identity', version: '3.8.0'])
+        dependencies.add('core-ext', [group: 'org.tukaani', name: 'xz', version: '1.5'])
+        dependencies.add('core-ext', [group: 'org.eclipse', name: 'org.sat4j.core', version: '2.3.5.v201308161310'])
+        dependencies.add('core-ext', [group: 'org.eclipse', name: 'org.sat4j.pb', version: '2.3.5.v201308161310'])
+
+        // Used for dropins folder and stuff
+//        dependencies.add('core-ext', [group: 'org.eclipse.equinox', name: 'org.eclipse.equinox.p2.directorywatcher', version: '1.0.300.v20130327-2119'])
+//        dependencies.add( 'core-ext',[group: 'org.eclipse.platform', name: 'org.eclipse.equinox.p2.reconciler.dropins', version: '1.1.400'])
+//        dependencies.add( 'core-ext', [group: 'org.eclipse.platform', name: 'org.eclipse.equinox.p2.extensionlocation', version: '1.2.300'])
 
         dependencies.add('kernel', [group: 'org.eclipse.platform', name: 'org.eclipse.osgi', version: '3.12.50'])
 
