@@ -22,6 +22,10 @@ class StaticConfigurationFile {
         configurations.create 'core-ext', {
             it.transitive = false
         }
+
+//        wrapper.configurations.create("server") {
+//            it.transitive = true
+//        }
     }
 
     public static void addingContainerDependencies(RunEquinoxWrapper wrapper) {
@@ -83,12 +87,13 @@ class StaticConfigurationFile {
             exclude group: 'org.apache.felix'
         }
 
-        dependencies.add('core-ext', [group: 'org.eclipse.platform', name: 'org.eclipse.osgi.compatibility.state', version: '1.0.200'])
+        //dependencies.add('core-ext', [group: 'org.eclipse.platform', name: 'org.eclipse.osgi.compatibility.state', version: '1.1.0'])
 
         dependencies.add('core-ext', [group: 'org.osgi', name: 'org.osgi.service.cm', version: '1.5.0'])
         dependencies.add('core-ext', [group: 'org.osgi', name: 'org.osgi.service.component', version: '1.3.0'])
         dependencies.add('core-ext', [group: 'org.osgi', name: 'org.osgi.util.promise', version: '1.0.0'])
         dependencies.add('core-ext', [group: 'org.osgi', name: 'org.osgi.util.function', version: '1.0.0'])
+        dependencies.add('core-ext', [group: 'org.osgi', name: 'org.osgi.service.event', version: '1.4.0'])
         dependencies.add('core-ext', [group: 'org.apache.felix', name: 'org.apache.felix.scr', version: '2.0.12'])
         dependencies.add('core-ext', [group: 'org.apache.felix', name: 'org.apache.felix.scr', version: '2.0.6'])
 
@@ -97,13 +102,14 @@ class StaticConfigurationFile {
         dependencies.add('core-ext', [group: 'org.tukaani', name: 'xz', version: '1.5'])
         dependencies.add('core-ext', [group: 'org.eclipse', name: 'org.sat4j.core', version: '2.3.5.v201308161310'])
         dependencies.add('core-ext', [group: 'org.eclipse', name: 'org.sat4j.pb', version: '2.3.5.v201308161310'])
+        dependencies.add('core-ext', [group: 'javax.transaction', name: 'com.springsource.javax.transaction', version: '1.1.0'])
+        dependencies.add('core-ext', [group: 'javax.servlet', name: 'javax.servlet-api', version: '3.1.0'])
+        dependencies.add('core-ext', [group: 'javax.mail', name: 'mail', version:'1.4.7'])
+        dependencies.add('core-ext', [group: 'javax.security.auth.message', name: 'javax.security.auth.message-api', version: '1.1'])
+        dependencies.add('core-ext', [group: 'javax.websocket', name: 'javax.websocket-api',version: '1.1'])
+        
 
-        // Used for dropins folder and stuff
-//        dependencies.add('core-ext', [group: 'org.eclipse.equinox', name: 'org.eclipse.equinox.p2.directorywatcher', version: '1.0.300.v20130327-2119'])
-//        dependencies.add( 'core-ext',[group: 'org.eclipse.platform', name: 'org.eclipse.equinox.p2.reconciler.dropins', version: '1.1.400'])
-//        dependencies.add( 'core-ext', [group: 'org.eclipse.platform', name: 'org.eclipse.equinox.p2.extensionlocation', version: '1.2.300'])
-
-        dependencies.add('kernel', [group: 'org.eclipse.platform', name: 'org.eclipse.osgi', version: '3.12.50'])
+        dependencies.add('kernel', [group: 'org.eclipse.platform', name: 'org.eclipse.osgi', version: '3.12.100'])
 
         dependencies.add( 'compileOnly', [group: 'org.osgi', name: 'org.osgi.service.component.annotations', version: '1.3.0'])
     }
