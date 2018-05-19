@@ -1,16 +1,18 @@
 package org.osgi.container
 
 import groovy.util.logging.Slf4j
+import org.apache.commons.io.IOUtils
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.artifacts.ConfigurationContainer
-import org.gradle.api.artifacts.dsl.DependencyHandler
 
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.jar.Attributes
-import java.util.jar.JarInputStream
 import java.util.jar.Manifest
+import java.util.regex.Matcher
+import java.util.regex.Pattern
+import java.util.zip.ZipEntry
+import java.util.zip.ZipFile
 
 /**
  * Created by mladen on 11/18/2017.
@@ -84,6 +86,7 @@ class RunEqunoxPlugin implements Plugin<Project> {
         }
 
         addConfigurationInFile(bundlesInfo,"core-ext")
+        addConfigurationInFile(bundlesInfo,"runtime")
 
     }
 
@@ -91,42 +94,57 @@ class RunEqunoxPlugin implements Plugin<Project> {
         def configurationBundles = StringBuilder.newInstance()
 
         wrapper.getConfigurations().getByName(configuration).findResults { dependencyJar ->
-            dependencyJar.withInputStream { inputStream ->
-                JarInputStream jarInputStream = new JarInputStream(inputStream)
-                Manifest manifest = jarInputStream.getManifest();
+                Pattern p = Pattern.compile("([^a-z]+\\Qsource\\E)|(\\Qgroovy\\E)|([^\\.]\\Qgradle\\E)");
 
-                String symbolicName = getSymbolicName(manifest)
+                Matcher matcher = p.matcher(dependencyJar.path);
+                boolean findMatch = matcher.find()
 
-                String version = manifest.mainAttributes.getValue(new Attributes.Name("Bundle-Version"))
+                if(!findMatch ) {
+                    ZipFile zipFile = new ZipFile(dependencyJar.path)
 
-                //assuming all of the bundles will have symbolic and version attributes
-                if (manifest != null) {
-                    if (manifest.mainAttributes.containsKey(new Attributes.Name('Fragment-Host'))) {
-                        configurationBundles << symbolicName + "," + version + "," + "file:/" + dependencyJar.path + "," + "4" + "," + "false" + "\n"
-                    } else {
-                        configurationBundles << symbolicName + "," + version + "," + "file:/" + dependencyJar.path + "," + "4" + "," + "true" + "\n"
+                    Enumeration<? extends ZipEntry> entries = zipFile.entries();
+
+                    while (entries.hasMoreElements()) {
+                        ZipEntry entry = entries.nextElement();
+                        if (entry.getName().equals("META-INF/MANIFEST.MF")) {
+
+                            InputStream stream = zipFile.getInputStream(entry);
+
+                            Manifest manifest = new Manifest(stream)
+                            String bundleSymbolicName = manifest.mainAttributes.getValue(new Attributes.Name("Bundle-SymbolicName"))
+                            String bundleVersion = manifest.mainAttributes.getValue(new Attributes.Name("Bundle-Version"))
+                            boolean isFragment = manifest.getAttributes('Fragment-Host')
+                            String path = dependencyJar.path
+
+                            int indexBadChar = bundleSymbolicName.indexOf(";")
+                            if(indexBadChar != -1) {
+                                bundleSymbolicName = bundleSymbolicName.substring(0,indexBadChar)
+                            }
+
+                            if (bundleSymbolicName != null && bundleVersion != null) {
+                                if (isFragment) {
+                                    configurationBundles << getBundlesInfoLineFor(bundleSymbolicName, bundleVersion, path, false)
+                                } else {
+                                    configurationBundles << getBundlesInfoLineFor(bundleSymbolicName, bundleVersion, path, true)
+                                }
+                            }
+                        }
                     }
-                }
+
             }
         }
-        outputFile.setText(configurationBundles.toString())
+        outputFile.append(configurationBundles.toString())
     }
 
-    private String getSymbolicName(Manifest manifest) {
-        String symbolicName = manifest.mainAttributes.getValue(new Attributes.Name("Bundle-SymbolicName"))
-        int indexToCrop = symbolicName.indexOf(';')
-
-        if(indexToCrop != -1) {
-            symbolicName = symbolicName.substring(0, indexToCrop)
-        }
-
-        return symbolicName
+    private String getBundlesInfoLineFor (String symbolicName, String version, String path ,boolean isStarted) {
+        symbolicName + "," + version + "," + "file:/" + path + "," + "4" + "," + isStarted + "\n"
     }
 
     void copyToLocal() {
         copyConfgiurationToLocal("core-ext")
         copyConfgiurationToLocal("kernel")
         copyConfgiurationToLocal("runtime")
+//        copyConfgiurationToLocal("server")
     }
 
     private copyConfgiurationToLocal(String configuration) {
