@@ -1,7 +1,6 @@
 package org.osgi.container
 
 import groovy.util.logging.Slf4j
-import org.apache.commons.io.IOUtils
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
@@ -32,9 +31,9 @@ class RunEqunoxPlugin implements Plugin<Project> {
 
                 StaticConfigurationFile.addingContainerDependencies(wrapper)
 
-                createContainerRuntime()
-
                 copyToLocal()
+
+                createContainerRuntime()
 
                 createBundlesInfo()
             }
@@ -60,6 +59,9 @@ class RunEqunoxPlugin implements Plugin<Project> {
         properties.put("eclipse.ignoreApp", "true")
         properties.put("eclipse.consoleLog", "true")
         properties.put("osgi.noShutdown", "true")
+        properties.put("osgi.framework", new File(RunEquinoxWrapper.PLUGINS).listFiles().find() {
+            it.name.contains("org.eclipse.osgi")
+        }.toString())
 
         properties.put("org.eclipse.equinox.simpleconfigurator.configUrl",
                 "file:" + RunEquinoxWrapper.CONFIGURATIONS + File.separator +BUNDLES_INFO.toString())
@@ -85,52 +87,49 @@ class RunEqunoxPlugin implements Plugin<Project> {
             bundlesInfo.createNewFile();
         }
 
-        addConfigurationInFile(bundlesInfo,"core-ext")
-        addConfigurationInFile(bundlesInfo,"runtime")
-
+        addConfigurationInFile(bundlesInfo,RunEquinoxWrapper.PLUGINS)
     }
 
-    private addConfigurationInFile(File outputFile, String configuration) {
+    private addConfigurationInFile(File outputFile, String bundlesFolder) {
         def configurationBundles = StringBuilder.newInstance()
 
-        wrapper.getConfigurations().getByName(configuration).findResults { dependencyJar ->
-                Pattern p = Pattern.compile("([^a-z]+\\Qsource\\E)|(\\Qgroovy\\E)|([^\\.]\\Qgradle\\E)");
+        new File(bundlesFolder).eachFile {
+            Pattern p = Pattern.compile("([^a-z]+\\Qsource\\E)|(\\Qgroovy\\E)|([^\\.]\\Qgradle\\E)");
 
-                Matcher matcher = p.matcher(dependencyJar.path);
-                boolean findMatch = matcher.find()
+            Matcher matcher = p.matcher(it.path);
+            boolean findMatch = matcher.find()
 
-                if(!findMatch ) {
-                    ZipFile zipFile = new ZipFile(dependencyJar.path)
+            if(!findMatch) {
+                ZipFile zipFile = new ZipFile(it.path)
 
-                    Enumeration<? extends ZipEntry> entries = zipFile.entries();
+                Enumeration<? extends ZipEntry> entries = zipFile.entries();
 
-                    while (entries.hasMoreElements()) {
-                        ZipEntry entry = entries.nextElement();
-                        if (entry.getName().equals("META-INF/MANIFEST.MF")) {
+                while (entries.hasMoreElements()) {
+                    ZipEntry entry = entries.nextElement();
+                    if (entry.getName().equals("META-INF/MANIFEST.MF")) {
 
-                            InputStream stream = zipFile.getInputStream(entry);
+                        InputStream stream = zipFile.getInputStream(entry);
 
-                            Manifest manifest = new Manifest(stream)
-                            String bundleSymbolicName = manifest.mainAttributes.getValue(new Attributes.Name("Bundle-SymbolicName"))
-                            String bundleVersion = manifest.mainAttributes.getValue(new Attributes.Name("Bundle-Version"))
-                            boolean isFragment = manifest.getAttributes('Fragment-Host')
-                            String path = dependencyJar.path
+                        Manifest manifest = new Manifest(stream)
+                        String bundleSymbolicName = manifest.mainAttributes.getValue(new Attributes.Name("Bundle-SymbolicName"))
+                        String bundleVersion = manifest.mainAttributes.getValue(new Attributes.Name("Bundle-Version"))
+                        boolean isFragment = manifest.getAttributes('Fragment-Host')
+                        String path = it.path
 
-                            int indexBadChar = bundleSymbolicName.indexOf(";")
-                            if(indexBadChar != -1) {
-                                bundleSymbolicName = bundleSymbolicName.substring(0,indexBadChar)
-                            }
+                        int indexBadChar = bundleSymbolicName.indexOf(";")
+                        if (indexBadChar != -1) {
+                            bundleSymbolicName = bundleSymbolicName.substring(0, indexBadChar)
+                        }
 
-                            if (bundleSymbolicName != null && bundleVersion != null) {
-                                if (isFragment) {
-                                    configurationBundles << getBundlesInfoLineFor(bundleSymbolicName, bundleVersion, path, false)
-                                } else {
-                                    configurationBundles << getBundlesInfoLineFor(bundleSymbolicName, bundleVersion, path, true)
-                                }
+                        if (bundleSymbolicName != null && bundleVersion != null) {
+                            if (isFragment) {
+                                configurationBundles << getBundlesInfoLineFor(bundleSymbolicName, bundleVersion, path, false)
+                            } else {
+                                configurationBundles << getBundlesInfoLineFor(bundleSymbolicName, bundleVersion, path, true)
                             }
                         }
                     }
-
+                }
             }
         }
         outputFile.append(configurationBundles.toString())
@@ -141,17 +140,16 @@ class RunEqunoxPlugin implements Plugin<Project> {
     }
 
     void copyToLocal() {
-        copyConfgiurationToLocal("core-ext")
-        copyConfgiurationToLocal("kernel")
-        copyConfgiurationToLocal("runtime")
-//        copyConfgiurationToLocal("server")
+        copyConfgurationToLocal("core-ext")
+        copyConfgurationToLocal("kernel")
+        copyConfgurationToLocal("runtime")
     }
 
-    private copyConfgiurationToLocal(String configuration) {
+    private copyConfgurationToLocal(String configuration) {
         wrapper.getCurrentProject().copy {
             it.from wrapper.getConfigurations().getByName(configuration)
 
-            it.into RunEquinoxWrapper.LIBS_OSGI + "\\$configuration"
+            it.into RunEquinoxWrapper.PLUGINS
             it.include "*.*"
         }
     }
@@ -176,7 +174,9 @@ class RunEqunoxPlugin implements Plugin<Project> {
         batFile.createNewFile()
         assert batFile.exists(), "$batFile wasn't created!"
 
-        String osgiCoreBundlePath = wrapper.getConfigurations().getByName("kernel").asPath
+        String osgiCoreBundlePath = new File(RunEquinoxWrapper.PLUGINS).listFiles().find() {
+            it.name.contains("org.eclipse.osgi")
+        }
 
         batFile.setText("java -jar $osgiCoreBundlePath -console -configuration configuration".toString())
     }

@@ -11,7 +11,7 @@ class RunEquinoxWrapper {
     private static DependencyHandler dependencies
     private static Project currentProject;
 
-    public static String LIBS_OSGI
+    public static String PLUGINS
     public static String CONFIGURATIONS
 
     public RunEquinoxWrapper(Project project) {
@@ -22,12 +22,11 @@ class RunEquinoxWrapper {
         dependencies = project.dependencies
 
         CONFIGURATIONS = "$currentProject.buildDir\\configuration".toString()
-        LIBS_OSGI = "$currentProject.buildDir\\libs\\osgi" . toString()
+        PLUGINS = "$currentProject.buildDir\\plugins" . toString()
 
         project.repositories {
             mavenCentral()
             maven { url = 'http://download.eclipse.org/gemini/mvn/' }
-            maven { url = 'http://dist.wso2.org/maven2/' }
 
             maven { url = 'http://repository.springsource.com/maven/bundles/external' }
             maven { url = 'http://dist.wso2.org/maven2/' }
