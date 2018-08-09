@@ -1,6 +1,7 @@
 package org.osgi.container
 
 import groovy.util.logging.Slf4j
+import org.apache.commons.io.IOUtils
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
@@ -129,7 +130,7 @@ class RunEqunoxPlugin implements Plugin<Project> {
                             }
                         }
                     }
-                }
+
             }
         }
         outputFile.append(configurationBundles.toString())
