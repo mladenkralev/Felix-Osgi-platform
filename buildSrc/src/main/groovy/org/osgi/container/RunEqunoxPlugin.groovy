@@ -100,7 +100,7 @@ class RunEqunoxPlugin implements Plugin<Project> {
             Matcher matcher = p.matcher(it.path);
             boolean findMatch = matcher.find()
 
-            if(!findMatch) {
+            if (!findMatch) {
                 ZipFile zipFile = new ZipFile(it.path)
 
                 Enumeration<? extends ZipEntry> entries = zipFile.entries();
@@ -131,12 +131,13 @@ class RunEqunoxPlugin implements Plugin<Project> {
                         }
                     }
 
+                }
             }
+            outputFile.append(configurationBundles.toString())
         }
-        outputFile.append(configurationBundles.toString())
     }
 
-    private String getBundlesInfoLineFor (String symbolicName, String version, String path ,boolean isStarted) {
+    private String getBundlesInfoLineFor(String symbolicName, String version, String path, boolean isStarted) {
         symbolicName + "," + version + "," + "file:/" + path + "," + "4" + "," + isStarted + "\n"
     }
 
@@ -182,3 +183,4 @@ class RunEqunoxPlugin implements Plugin<Project> {
         batFile.setText("java -jar $osgiCoreBundlePath -console -configuration configuration".toString())
     }
 }
+
