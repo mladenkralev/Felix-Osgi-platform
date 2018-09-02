@@ -57,8 +57,8 @@ class RunEqunoxPlugin implements Plugin<Project> {
         println(simpleConfiguratorBundle)
         Properties properties = new Properties()
         properties.put("osgi.bundles",simpleConfiguratorBundle+"@start")
-        properties.put("eclipse.ignoreApp", "true")
         properties.put("eclipse.consoleLog", "true")
+        properties.put("equinox.use.ds", "true")
         properties.put("osgi.noShutdown", "true")
         properties.put("osgi.framework", new File(RunEquinoxWrapper.PLUGINS).listFiles().find() {
             it.name.contains("org.eclipse.osgi")
@@ -114,7 +114,7 @@ class RunEqunoxPlugin implements Plugin<Project> {
                         Manifest manifest = new Manifest(stream)
                         String bundleSymbolicName = manifest.mainAttributes.getValue(new Attributes.Name("Bundle-SymbolicName"))
                         String bundleVersion = manifest.mainAttributes.getValue(new Attributes.Name("Bundle-Version"))
-                        boolean isFragment = manifest.getAttributes('Fragment-Host')
+                        boolean isFragment = manifest.mainAttributes.getValue('Fragment-Host')
                         String path = it.path
 
                         int indexBadChar = bundleSymbolicName.indexOf(";")
@@ -124,17 +124,18 @@ class RunEqunoxPlugin implements Plugin<Project> {
 
                         if (bundleSymbolicName != null && bundleVersion != null) {
                             if (isFragment) {
+                                println bundleSymbolicName
                                 configurationBundles << getBundlesInfoLineFor(bundleSymbolicName, bundleVersion, path, false)
                             } else {
                                 configurationBundles << getBundlesInfoLineFor(bundleSymbolicName, bundleVersion, path, true)
                             }
                         }
                     }
-
                 }
             }
-            outputFile.append(configurationBundles.toString())
         }
+        outputFile.append(configurationBundles.toString())
+
     }
 
     private String getBundlesInfoLineFor(String symbolicName, String version, String path, boolean isStarted) {
