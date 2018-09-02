@@ -1,37 +1,29 @@
 package org.osgi.container
 
-class StaticConfigurationFile {
+import org.gradle.api.Project
 
-    private static void addPluginConfigurations(RunEquinoxWrapper wrapper) {
-        def configurations = wrapper.configurations
+class StaticConfigurationFile {
+    private static Project project;
+
+    private static void addPluginConfigurations() {
+        def configurations = project.getConfigurations()
 
         // OSGI system bundle
-        wrapper.configurations.create("kernel") {
+        configurations.create("kernel") {
             it.transitive = false
         }
-
-        // Used for component annotations
-        configurations.create 'osgi-compile'
-        configurations.getByName('osgi-compile').extendsFrom(configurations.getByName('compile'))
-
-        // Used for declarative services
-        configurations.create 'osgi-runtime'
-        configurations.getByName('osgi-runtime').extendsFrom(configurations.getByName('runtime'))
 
         // Added for all other bundles
         configurations.create 'core-ext', {
             it.transitive = false
         }
-
-//        wrapper.configurations.create("server") {
-//            it.transitive = true
-//        }
     }
 
-    public static void addingContainerDependencies(RunEquinoxWrapper wrapper) {
-        def dependencies = wrapper.getDependencies()
+    public static void addDependencies(Project project) {
+        def dependencies = project.dependencies
+        StaticConfigurationFile.project = project
 
-        addPluginConfigurations(wrapper)
+        addPluginConfigurations()
                                        // GOGO Shell + equinox console
         dependencies.add('core-ext', [group: 'org.apache.felix', name: 'org.apache.felix.gogo.runtime', version: '0.12.0'])
         dependencies.add('core-ext', [group: 'org.apache.felix', name: 'org.apache.felix.gogo.shell', version: '0.12.0'])

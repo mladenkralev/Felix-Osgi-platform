@@ -7,22 +7,14 @@ import org.gradle.api.artifacts.dsl.DependencyHandler
 
 @Slf4j
 class RunEquinoxWrapper {
-    private static ConfigurationContainer configurations
-    private static DependencyHandler dependencies
-    private static Project currentProject;
-
     public static String PLUGINS
     public static String CONFIGURATIONS
 
     public RunEquinoxWrapper(Project project) {
         log.info("Initial setup started ...")
 
-        currentProject = project
-        configurations = project.configurations
-        dependencies = project.dependencies
-
-        CONFIGURATIONS = "$currentProject.buildDir\\configuration".toString()
-        PLUGINS = "$currentProject.buildDir\\plugins" . toString()
+        CONFIGURATIONS = "$project.buildDir\\configuration".toString()
+        PLUGINS = "$project.buildDir\\plugins" . toString()
 
         project.repositories {
             mavenCentral()
@@ -39,18 +31,4 @@ class RunEquinoxWrapper {
 
         log.info("Initial setup ended...")
     }
-
-    ConfigurationContainer getConfigurations() {
-        return configurations
-    }
-
-    DependencyHandler getDependencies() {
-        return dependencies
-    }
-
-    Project getCurrentProject() {
-        return currentProject
-    }
-
-
 }
