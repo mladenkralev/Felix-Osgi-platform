@@ -6,16 +6,11 @@ import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.artifacts.dsl.DependencyHandler
 
 @Slf4j
-class RunEquinoxWrapper {
-    public static String PLUGINS
-    public static String CONFIGURATIONS
+class RepositoryHandler {
 
-    public RunEquinoxWrapper(Project project) {
+    public RepositoryHandler(Project project) {
         log.info("Initial setup started ...")
-
-        CONFIGURATIONS = "$project.buildDir\\configuration".toString()
-        PLUGINS = "$project.buildDir\\plugins" . toString()
-
+        
         project.repositories {
             mavenCentral()
             maven { url = 'http://download.eclipse.org/gemini/mvn/' }
