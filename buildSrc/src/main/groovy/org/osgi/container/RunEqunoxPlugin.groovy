@@ -20,7 +20,6 @@ import java.util.zip.ZipFile
 
 @Slf4j
 class RunEqunoxPlugin implements Plugin<Project> {
-    private RunEquinoxWrapper wrapper;
 
     void apply(Project project) {
         project.tasks.create('createP2Wrapper', CreateP2Wrapper) {

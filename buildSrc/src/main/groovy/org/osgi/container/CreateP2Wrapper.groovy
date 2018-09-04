@@ -15,46 +15,52 @@ import java.util.zip.ZipFile;
 
 @Slf4j
 public class CreateP2Wrapper extends DefaultTask {
-    private RunEquinoxWrapper wrapper;
+    private DefaultRepositoryHandler repositoryHandler;
     public static final String BUNDLES_INFO = "org.eclipse.equinox.simpleconfigurator\\bundles.info"
 
+    public static String CONFIGURATIONS;
+    public static String PLUGINS;
+
     CreateP2Wrapper() {
-        wrapper = new RunEquinoxWrapper(project);
+        repositoryHandler = new DefaultRepositoryHandler(project);
+        CONFIGURATIONS ="$project.buildDir\\configuration".toString()
+        PLUGINS = "$project.buildDir\\plugins".toString()
     }
 
     @TaskAction
     public void executeAction() {
-            copyToLocal()
-
+            CopyUtil.copyConfigurationsToDirectory(project, PLUGINS)
             createContainerRuntime()
-
             createBundlesInfo()
-
     }
+
     void createContainerRuntime() {
         log.info("Creating container ...")
 
+        Properties properties = setDefaultConfigIniProperties()
+
+        createConfigIniFile(properties)
+
+        Path destinationFolder = Paths.get("${project.rootDir}" + "${File.separator}build")
+        Path osgiCoreBundlePath = getPluginBundlesPath("org.eclipse.osgi")
+        ExecutableCreator.createExecutableOsgiContainer(destinationFolder, osgiCoreBundlePath)
+
+        Path launcherPath =getPluginBundlesPath("org.eclipse.equinox.launcher")
+        ExecutableCreator.createExecutableP2Provision(destinationFolder, launcherPath)
+        ExecutableCreator.createExecutableDirector(destinationFolder, launcherPath)
+
+        log.info("Container created!")
+    }
+
+    private Path getPluginBundlesPath(String bundle) {
+        new File(PLUGINS).listFiles().find() {
+            it.name.contains(bundle)
+        }.toPath()
+    }
+
+    private void createConfigIniFile(Properties properties) {
         File configIni = new File(project.buildDir.absolutePath +
                 "\\configuration\\config.ini")
-
-        String simpleConfiguratorBundle = project.getConfigurations().getByName("core-ext").find {
-            if(it.name.contains("org.eclipse.equinox.simpleconfigurator-1.1.200")) {
-                return it.name
-            }
-        }
-
-        println(simpleConfiguratorBundle)
-        Properties properties = new Properties()
-        properties.put("osgi.bundles",simpleConfiguratorBundle+"@start")
-        properties.put("eclipse.consoleLog", "true")
-        properties.put("equinox.use.ds", "true")
-        properties.put("osgi.noShutdown", "true")
-        properties.put("osgi.framework", new File(RunEquinoxWrapper.PLUGINS).listFiles().find() {
-            it.name.contains("org.eclipse.osgi")
-        }.toString())
-
-        properties.put("org.eclipse.equinox.simpleconfigurator.configUrl",
-                "file:" + RunEquinoxWrapper.CONFIGURATIONS + File.separator +BUNDLES_INFO.toString())
 
         configIni.getParentFile().mkdirs();
         if (!configIni.exists()) {
@@ -63,24 +69,44 @@ public class CreateP2Wrapper extends DefaultTask {
 
         OutputStream outputStream = new FileOutputStream(configIni)
         properties.store(outputStream, "This is build generated file.")
-
-        createBatScript()
-        log.info("Container created!")
-
     }
 
-    void createBundlesInfo() {
-        File bundlesInfo = new File(RunEquinoxWrapper.CONFIGURATIONS + File.separator + BUNDLES_INFO.toString())
+    private Properties setDefaultConfigIniProperties() {
+        String simpleConfiguratorBundle = getSimpleConfiguratorBundlesPath()
+
+        Properties properties = new Properties()
+        properties.put("osgi.bundles", simpleConfiguratorBundle + "@start")
+        properties.put("eclipse.consoleLog", "true")
+        properties.put("equinox.use.ds", "true")
+        properties.put("osgi.framework", new File(PLUGINS).listFiles().find() {
+            it.name.contains("org.eclipse.osgi")
+        }.toString())
+
+        properties.put("org.eclipse.equinox.simpleconfigurator.configUrl",
+                "file:" + CONFIGURATIONS + File.separator + BUNDLES_INFO.toString())
+        properties
+    }
+
+    private Object getSimpleConfiguratorBundlesPath() {
+        project.getConfigurations().getByName("core-ext").find {
+            if (it.name.contains("org.eclipse.equinox.simpleconfigurator-1.1.200")) {
+                return it.name
+            }
+        }
+    }
+
+    static void createBundlesInfo() {
+        File bundlesInfo = new File(CONFIGURATIONS + File.separator + BUNDLES_INFO.toString())
 
         bundlesInfo.getParentFile().mkdirs();
         if (!bundlesInfo.exists()) {
             bundlesInfo.createNewFile();
         }
 
-        addConfigurationInFile(bundlesInfo,RunEquinoxWrapper.PLUGINS)
+        addConfigurationInFile(bundlesInfo,PLUGINS)
     }
 
-    private addConfigurationInFile(File outputFile, String bundlesFolder) {
+    private static addConfigurationInFile(File outputFile, String bundlesFolder) {
         def configurationBundles = StringBuilder.newInstance()
 
         new File(bundlesFolder).eachFile {
@@ -126,47 +152,9 @@ public class CreateP2Wrapper extends DefaultTask {
         outputFile.append(configurationBundles.toString())
     }
 
-    public String getBundlesInfoLineFor(String symbolicName, String version, String path, boolean isStarted) {
+    static String getBundlesInfoLineFor(String symbolicName, String version, String path, boolean isStarted) {
         symbolicName + "," + version + "," + "file:/" + path + "," + "4" + "," + isStarted + "\n"
     }
 
-    void copyToLocal() {
-        copyConfgurationToLocal("core-ext")
-        copyConfgurationToLocal("kernel")
-        copyConfgurationToLocal("runtime")
-    }
 
-    private copyConfgurationToLocal(String configuration) {
-        this.project.copy {
-            from project.getConfigurations().getByName(configuration)
-
-            into RunEquinoxWrapper.PLUGINS
-            include "*.*"
-        }
-    }
-
-    boolean createBatScript() {
-        Path folderRuntimePath = Paths.get(
-                "${project.rootDir}" +
-                        "${File.separator}build")
-
-        File directoryBatFile = new File(folderRuntimePath.toString())
-
-        directoryBatFile.mkdir()
-
-        Path batFilePath = Paths.get(
-                "${project.rootDir}" +
-                        "${File.separator}build" +
-                        "${File.separator}start.bat")
-
-        File batFile = new File(batFilePath.toString())
-        batFile.createNewFile()
-        assert batFile.exists(), "$batFile wasn't created!"
-
-        String osgiCoreBundlePath = new File(RunEquinoxWrapper.PLUGINS).listFiles().find() {
-            it.name.contains("org.eclipse.osgi")
-        }
-
-        batFile.setText("java -jar $osgiCoreBundlePath -console -configuration configuration".toString())
-    }
 }

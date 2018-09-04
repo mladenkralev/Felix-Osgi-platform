@@ -2,15 +2,13 @@ package org.osgi.container
 
 import groovy.util.logging.Slf4j
 import org.gradle.api.Project
-import org.gradle.api.artifacts.ConfigurationContainer
-import org.gradle.api.artifacts.dsl.DependencyHandler
 
 @Slf4j
-class RepositoryHandler {
+class DefaultRepositoryHandler {
 
-    public RepositoryHandler(Project project) {
+    public DefaultRepositoryHandler(Project project) {
         log.info("Initial setup started ...")
-        
+
         project.repositories {
             mavenCentral()
             maven { url = 'http://download.eclipse.org/gemini/mvn/' }
