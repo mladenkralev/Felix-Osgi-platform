@@ -85,9 +85,14 @@ class StaticConfigurationFile {
         dependencies.add('core-ext', [group: 'org.eclipse.platform', name: 'org.eclipse.equinox.p2.transport.ecf', version: '1.1.300'])
         dependencies.add('core-ext', [group: 'org.eclipse.ecf', name: 'org.eclipse.ecf', version: '3.9.0'])
         dependencies.add('core-ext', [group: 'org.eclipse.ecf', name: 'org.eclipse.ecf.filetransfer', version: '5.0.0.v20130604-1622'])
-        dependencies.add('core-ext', [group: 'org.eclipse.ecf', name: 'org.eclipse.ecf.provider.filetransfer', version: '3.2.0.v20130604-1622'])
         dependencies.add('core-ext', [group: 'org.eclipse.ecf', name: 'org.eclipse.ecf.identity', version: '3.9.0'])
+        dependencies.add('core-ext', [group: 'org.eclipse.ecf', name: 'org.eclipse.ecf.provider.filetransfer', version: '3.2.0.v20130604-1622'])
         dependencies.add('core-ext', [group: 'org.eclipse.platform', name: 'org.eclipse.equinox.concurrent', version: '1.1.100'])
+
+        dependencies.add('core-ext', [group: 'org.eclipse.platform', name: 'org.eclipse.core.net.linux.x86_64', version: '1.2.100'])
+        dependencies.add('core-ext', [group: 'org.eclipse.platform', name: 'org.eclipse.core.net.win32.x86_64', version: '1.1.100'])
+        dependencies.add('core-ext', [group: 'org.eclipse.core', name: 'org.eclipse.core.net', version: '1.2.0.I20090522-1010'])
+
 
         dependencies.add('kernel', [group: 'org.eclipse.platform', name: 'org.eclipse.osgi', version: '3.11.2'])
     }

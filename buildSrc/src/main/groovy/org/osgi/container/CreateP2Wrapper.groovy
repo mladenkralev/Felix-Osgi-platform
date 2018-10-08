@@ -139,7 +139,6 @@ public class CreateP2Wrapper extends DefaultTask {
 
                         if (bundleSymbolicName != null && bundleVersion != null) {
                             if (isFragment) {
-                                println bundleSymbolicName
                                 configurationBundles << getBundlesInfoLineFor(bundleSymbolicName, bundleVersion, path, false)
                             } else {
                                 configurationBundles << getBundlesInfoLineFor(bundleSymbolicName, bundleVersion, path, true)
