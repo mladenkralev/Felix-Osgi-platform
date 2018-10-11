@@ -10,7 +10,6 @@ class CopyUtil {
     public static void copyConfigurationsToDirectory(Project project, String folder) {
         copyConfigurationToLocal(project,"core-ext", folder)
         copyConfigurationToLocal(project,"kernel", folder)
-        copyConfigurationToLocal(project, "runtime", folder)
     }
 
     public static copyConfigurationToLocal(Project project, String configuration, String folder) {

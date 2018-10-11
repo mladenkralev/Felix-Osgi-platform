@@ -20,11 +20,15 @@ public class CreateP2Wrapper extends DefaultTask {
 
     public static String CONFIGURATIONS;
     public static String PLUGINS;
+    public static String CONFIG_INI;
+    public static String OUTPUT_FOLDER;
 
     CreateP2Wrapper() {
         repositoryHandler = new DefaultRepositoryHandler(project);
-        CONFIGURATIONS ="$project.buildDir\\configuration".toString()
-        PLUGINS = "$project.buildDir\\plugins".toString()
+        OUTPUT_FOLDER= "$project.buildDir" + File.separator + "p2Container"
+        CONFIGURATIONS = "$OUTPUT_FOLDER" + File.separator + "configuration".toString()
+        PLUGINS = "$OUTPUT_FOLDER" + File.separator + "plugins".toString()
+        CONFIG_INI= "$OUTPUT_FOLDER" + File.separator + "configuration" + File.separator + "config.ini"
     }
 
     @TaskAction
@@ -41,7 +45,7 @@ public class CreateP2Wrapper extends DefaultTask {
 
         createConfigIniFile(properties)
 
-        Path destinationFolder = Paths.get("${project.rootDir}" + "${File.separator}build")
+        Path destinationFolder = Paths.get(OUTPUT_FOLDER)
         Path osgiCoreBundlePath = getPluginBundlesPath("org.eclipse.osgi")
         ExecutableCreator.createExecutableOsgiContainer(destinationFolder, osgiCoreBundlePath)
 
@@ -59,8 +63,7 @@ public class CreateP2Wrapper extends DefaultTask {
     }
 
     private void createConfigIniFile(Properties properties) {
-        File configIni = new File(project.buildDir.absolutePath +
-                "\\configuration\\config.ini")
+        File configIni = new File(CONFIG_INI)
 
         configIni.getParentFile().mkdirs();
         if (!configIni.exists()) {
@@ -115,6 +118,7 @@ public class CreateP2Wrapper extends DefaultTask {
             Matcher matcher = p.matcher(it.path);
             boolean findMatch = matcher.find()
 
+            log.info("Entry jar is: " + it.getAbsolutePath())
             if (!findMatch) {
                 ZipFile zipFile = new ZipFile(it.path)
 
