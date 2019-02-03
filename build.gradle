@@ -40,7 +40,9 @@ test {
 
 test.dependsOn('createP2Wrapper')
 
-
+ext {
+    someOtherProp = 123
+}
 
 
 

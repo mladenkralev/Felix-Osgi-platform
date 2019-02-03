@@ -23,6 +23,9 @@ class RunEqunoxPlugin implements Plugin<Project> {
 
     void apply(Project project) {
         project.tasks.create('createP2Wrapper', CreateP2Wrapper) {
+
+            println project.properties
+
             StaticConfigurationFile.addDependencies(project);
             project.getConfigurations().each { println(it) }
         }.dependsOn("jar")

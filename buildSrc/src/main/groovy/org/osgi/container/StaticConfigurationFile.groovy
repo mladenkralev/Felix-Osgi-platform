@@ -70,6 +70,8 @@ class StaticConfigurationFile {
         dependencies.add( 'core-ext',[group: 'org.eclipse.platform', name: 'org.eclipse.equinox.p2.artifact.repository', version: '1.1.650'])
         dependencies.add( 'core-ext',[group: 'org.eclipse.platform', name: 'org.eclipse.equinox.p2.jarprocessor', version: '1.0.500'])
         dependencies.add( 'core-ext',[group: 'org.eclipse.platform', name: 'org.eclipse.equinox.p2.updatesite', version: '1.0.600'])
+        dependencies.add( 'core-ext',[group: 'org.eclipse.equinox.p2', name: 'ql', version: '2.0.100'])
+
 
         dependencies.add( 'core-ext',[group: 'org.eclipse.platform', name: 'org.eclipse.osgi.compatibility.state', version: '1.0.200'])
 

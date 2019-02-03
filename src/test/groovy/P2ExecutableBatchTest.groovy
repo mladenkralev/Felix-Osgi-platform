@@ -20,7 +20,7 @@ public class P2ExecutableBatchTest extends GroovyTestCase {
         tempDirectoryFile = Files.createTempDirectory(System.currentTimeMillis().toString())
         rootDir = Paths.get(System.getProperty("user.dir"));
 
-        buildFolderAsString = rootDir.toAbsolutePath().toString() + File.separator + "build"
+        buildFolderAsString = rootDir.toAbsolutePath().toString() + File.separator + "build" + File.separator + "p2Container"
         buildFolder = Paths.get(buildFolderAsString);
         assert buildFolder != null
 
@@ -76,6 +76,8 @@ public class P2ExecutableBatchTest extends GroovyTestCase {
         args.add(buildFolderAsString + File.separator + "p2Provision.bat"); // command name
         args.add(buildFolderAsString); // -source parameter
         args.add(uriOfTempDirectory); // url of repository
+
+        args.each { println( it )}
 
         ProcessBuilder pb = new ProcessBuilder(args);
         pb.directory(buildFolder.toFile())

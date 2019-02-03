@@ -16,6 +16,7 @@ class DefaultRepositoryHandler {
             maven { url = 'http://repository.springsource.com/maven/bundles/external' }
             maven { url = 'http://dist.wso2.org/maven2/' }
             maven { url = 'http://www.datanucleus.org/downloads/maven2/' }
+            maven { url = 'http://www.jabylon.org/maven/' }
 
             ivy { url = 'http://build.eclipse.org/rt/virgo/ivy/bundles/release' }
             ivy { url = 'http://build.eclipse.org/rt/virgo/ivy/bundles/milestone' }
