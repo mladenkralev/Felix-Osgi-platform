@@ -1,42 +1,33 @@
 
-buildscript {
-    repositories {
-        maven {
-            url "https://plugins.gradle.org/m2/"
-        }
-    }
-    dependencies {
-        classpath "com.gradle.publish:plugin-publish-plugin:0.9.10"
-    }
+plugins {
+    id "com.gradle.plugin-publish" version "0.10.1"
+    id "java-gradle-plugin"
+    id "maven"
+    id "groovy"
 }
 
 repositories {
     mavenCentral()
 }
 
-apply plugin: 'maven'
-apply plugin: "com.gradle.plugin-publish"
-apply plugin: 'groovy'
-
 dependencies {
-    compile 'org.codehaus.groovy:groovy-all:2.4.12'
     testCompile group: 'junit', name: 'junit', version: '4.12'
     compile group: 'org.slf4j', name:'slf4j-api', version: '1.6.4'
     compile localGroovy()
     compile gradleApi()
 }
 
-version = "0.31"
+version = "0.33"
 group = "org.felix.osgi"
 
 pluginBundle {
-    website = 'http://www.gradle.org/'
+    website = 'http://github.com/mladenkralev/'
     vcsUrl = 'https://github.com/mladenkralev/Felix-Osgi-platform'
     description = 'Plugin that creates a osgi simple felix container'
     tags = ['felix', 'osgi']
 
     plugins {
-        greetingsPlugin {
+        greetingsPlugin  {
             id = 'org.felix.osgi'
             displayName = 'Simple Osgi Container'
         }

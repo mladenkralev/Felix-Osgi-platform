@@ -47,6 +47,7 @@ public class CreateP2Wrapper extends DefaultTask {
 
         Path destinationFolder = Paths.get(OUTPUT_FOLDER)
         Path osgiCoreBundlePath = getPluginBundlesPath("org.eclipse.osgi")
+        println(osgiCoreBundlePath)
         ExecutableCreator.createExecutableOsgiContainer(destinationFolder, osgiCoreBundlePath)
 
         Path launcherPath =getPluginBundlesPath("org.eclipse.equinox.launcher")
@@ -114,7 +115,7 @@ public class CreateP2Wrapper extends DefaultTask {
 
         new File(bundlesFolder).eachFile {
             Pattern p = Pattern.compile("([^a-z]+\\Qsource\\E)|(\\Qgroovy\\E)|([^\\.]\\Qgradle\\E)");
-
+            println(it.name)
             Matcher matcher = p.matcher(it.path);
             boolean findMatch = matcher.find()
 

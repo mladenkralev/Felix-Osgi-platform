@@ -95,6 +95,53 @@ class StaticConfigurationFile {
         dependencies.add('core-ext', [group: 'org.eclipse.platform', name: 'org.eclipse.core.net.win32.x86_64', version: '1.1.100'])
         dependencies.add('core-ext', [group: 'org.eclipse.core', name: 'org.eclipse.core.net', version: '1.2.0.I20090522-1010'])
 
+        // Extra gson
+        dependencies.add('core-ext', [group: 'com.google.code.gson', name: 'gson', version: '2.8.5'])
+
+        dependencies.add('core-ext', [group: 'org.glassfish.jersey.core', name: 'jersey-server', version: '2.28'])
+        dependencies.add('core-ext', [group: 'org.glassfish.jersey.media', name: 'jersey-media-sse', version: '2.28'])
+        dependencies.add('core-ext', [group: 'org.glassfish.jersey.media', name: 'jersey-media-json-binding', version: '2.28'])
+        dependencies.add('core-ext', [group: 'org.glassfish.jersey.media', name: 'jersey-media-jaxb', version: '2.28'])
+        dependencies.add('core-ext', [group: 'org.glassfish.jersey.inject', name: 'jersey-hk2', version: '2.28'])
+        dependencies.add('core-ext', [group: 'org.glassfish.jersey.containers', name: 'jersey-container-servlet', version: '2.28'])
+        dependencies.add('core-ext', [group: 'org.glassfish.jersey.containers', name: 'jersey-container-servlet-core', version: '2.28'])
+        dependencies.add('core-ext', [group: 'org.glassfish.jersey.core', name: 'jersey-common', version: '2.28'])
+        dependencies.add('core-ext', [group: 'org.glassfish.jersey.core', name: 'jersey-client', version: '2.28' ])
+
+        dependencies.add('core-ext', [group: 'org.eclipse', name: 'yasson', version: '1.0.3'])
+        dependencies.add('core-ext', [group: 'javax.validation', name: 'validation-api', version: '2.0.1.Final'])
+        dependencies.add('core-ext', [group: 'org.glassfish.hk2', name: 'osgi-resource-locator', version: '1.0.3'])
+        dependencies.add('core-ext', [group: 'org.javassist', name: 'javassist', version: '3.22.0-GA'])
+        dependencies.add('core-ext', [group: 'jakarta.xml.bind', name: 'jakarta.xml.bind-api', version: '2.3.2'])
+        dependencies.add('core-ext', [group: 'jakarta.ws.rs', name: 'jakarta.ws.rs-api', version: '2.1.5'])
+        dependencies.add('core-ext', [group: 'jakarta.servlet', name: 'jakarta.servlet-api', version: '4.0.2'])
+        dependencies.add('core-ext', [group: 'jakarta.persistence', name: 'jakarta.persistence-api', version: '2.2.2'])
+        dependencies.add('core-ext', [group: 'jakarta.json.bind', name: 'jakarta.json.bind-api', version: '1.0.1'])
+        dependencies.add('core-ext', [group: 'jakarta.json', name: 'jakarta.json-api', version: '1.1.5'])
+        dependencies.add('core-ext', [group: 'org.glassfish.hk2.external', name: 'jakarta.inject', version: '2.5.0'])
+        dependencies.add('core-ext', [group: 'jakarta.annotation', name: 'jakarta.annotation-api', version: '1.3.4'])
+        dependencies.add('core-ext', [group: 'jakarta.activation', name: 'jakarta.activation-api', version: '1.2.1'])
+        dependencies.add('core-ext', [group: 'org.glassfish.hk2.external', name: 'aopalliance-repackaged', version: '2.5.0'])
+        dependencies.add('core-ext', [group: 'com.sun.activation', name: 'javax.activation', version: '1.2.0'])
+        dependencies.add('core-ext', [group: 'javax.ws.rs', name: 'javax.ws.rs-api', version: '2.1.1'])
+
+        dependencies.add('core-ext', [group: 'org.glassfish.jersey.containers', name: 'jersey-container-grizzly2-http', version: '2.28'])
+        dependencies.add('core-ext', [group: 'org.glassfish.grizzly', name: 'grizzly-http-servlet', version: '2.4.4'])
+        dependencies.add('core-ext', [group: 'org.glassfish.grizzly', name: 'grizzly-http-server', version: '2.4.4'])
+        dependencies.add('core-ext', [group: 'org.glassfish.grizzly', name: 'grizzly-framework', version: '2.4.4'])
+        dependencies.add('core-ext', [group: 'org.glassfish.grizzly', name: 'grizzly-http', version: '2.4.4'])
+
+
+        dependencies.add('core-ext', [group: 'org.glassfish.hk2', name: 'hk2-locator', version: '2.5.0'])
+        dependencies.add('core-ext', [group: 'org.glassfish.hk2', name: 'hk2-api', version: '2.5.0'])
+        dependencies.add('core-ext', [group: 'org.glassfish.hk2', name: 'hk2-utils', version: '2.5.0'])
+
+
+
+
+//        dependencies.add('core-ext', [group: 'com.eclipsesource.jaxrs', name:'jersey-all', version: '2.22.2'])
+
+
 
         dependencies.add('kernel', [group: 'org.eclipse.platform', name: 'org.eclipse.osgi', version: '3.11.2'])
     }
