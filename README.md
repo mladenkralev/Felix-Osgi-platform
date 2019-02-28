@@ -1,2 +1,2 @@
-# Gradle pluguin for creating simple osgi container with grizley container
-Gradle plugin for producing small OSGI container
+# Gradle plugin for creating OSGI container 
+Gradle pluguin for creating simple osgi container with grizley container
