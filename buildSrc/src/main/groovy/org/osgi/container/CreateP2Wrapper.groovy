@@ -46,7 +46,7 @@ public class CreateP2Wrapper extends DefaultTask {
         createConfigIniFile(properties)
 
         Path destinationFolder = Paths.get(OUTPUT_FOLDER)
-        Path osgiCoreBundlePath = getPluginBundlesPath("org.eclipse.osgi")
+        Path osgiCoreBundlePath = getPluginBundlesPath("org.eclipse.osgi_")
         println(osgiCoreBundlePath)
         ExecutableCreator.createExecutableOsgiContainer(destinationFolder, osgiCoreBundlePath)
 
@@ -83,7 +83,7 @@ public class CreateP2Wrapper extends DefaultTask {
         properties.put("eclipse.consoleLog", "true")
         properties.put("equinox.use.ds", "true")
         properties.put("osgi.framework", new File(PLUGINS).listFiles().find() {
-            it.name.contains("org.eclipse.osgi")
+            it.name.contains("org.eclipse.osgi_")
         }.toString())
 
         properties.put("org.eclipse.equinox.simpleconfigurator.configUrl",
