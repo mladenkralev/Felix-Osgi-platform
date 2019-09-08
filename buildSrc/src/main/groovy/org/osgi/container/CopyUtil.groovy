@@ -7,8 +7,17 @@ class CopyUtil {
      * Copy core-ext, kernel, runtime configuration to folder
      * @param folder
      */
-    public static void copyConfigurationsToDirectory(Project project, String folder) {
+    public static void copyContainerConfigurationsToDirectory(Project project, String folder) {
         copyConfigurationToLocal(project,"core-ext", folder)
+        renameAndCopyConfigurationToLocal(project,"kernel", folder)
+    }
+    /**
+     * TODO generalize the utill method.
+     * @param project
+     * @param folder
+     */
+    public static void copyP2ConfigurationsToDirectory(Project project, String folder) {
+        copyConfigurationToLocal(project,"p2", folder)
         renameAndCopyConfigurationToLocal(project,"kernel", folder)
     }
 

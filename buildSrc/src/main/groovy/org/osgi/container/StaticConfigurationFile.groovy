@@ -17,6 +17,12 @@ class StaticConfigurationFile {
         configurations.create 'core-ext', {
             it.transitive = false
         }
+
+        //p2 agent
+        configurations.create 'p2', {
+            it.transitive = false
+        }
+
     }
 
     public static void addDependencies(Project project) {
@@ -142,5 +148,31 @@ class StaticConfigurationFile {
         dependencies.add('kernel', [group: 'org.apache.felix', name: 'org.apache.felix.scr', version: '2.1.0'])
         dependencies.add('kernel', [group: 'org.eclipse.platform', name: 'org.eclipse.equinox.console', version: '1.1.200'])
         dependencies.add('kernel', [group: 'org.eclipse.platform', name:'org.eclipse.osgi', version: '3.13.200'])
+
+        // P2 agent
+        dependencies.add( 'p2',[group: 'org.eclipse.platform', name: 'org.eclipse.equinox.p2.publisher', version: '1.4.200'])
+        dependencies.add( 'p2',[group: 'org.eclipse.platform', name: 'org.eclipse.equinox.p2.publisher.eclipse', version: '1.2.201'])
+        dependencies.add( 'p2',[group: 'org.eclipse.platform', name: 'org.eclipse.equinox.p2.director.app', version: '1.0.500'])
+        dependencies.add( 'p2',[group: 'org.eclipse.platform', name: 'org.eclipse.equinox.p2.director', version: '2.3.300'])
+        dependencies.add( 'p2',[group: 'org.eclipse.platform', name: 'org.eclipse.equinox.p2.repository', version: '2.3.300'])
+        dependencies.add( 'p2',[group: 'org.eclipse.platform', name: 'org.eclipse.equinox.p2.repository.tools', version: '2.1.400'])
+        dependencies.add( 'p2',[group: 'org.eclipse.platform', name: 'org.eclipse.equinox.p2.metadata', version: '2.3.200'])
+        dependencies.add( 'p2',[group: 'org.eclipse.platform', name: 'org.eclipse.equinox.p2.engine', version: '2.5.0'])
+        dependencies.add( 'p2',[group: 'org.eclipse.platform', name: 'org.eclipse.equinox.p2.operations', version: '2.4.200'])
+        dependencies.add( 'p2',[group: 'org.eclipse.platform', name: 'org.eclipse.equinox.p2.core', version: '2.4.101'])
+        dependencies.add( 'p2',[group: 'org.eclipse.platform', name: 'org.eclipse.equinox.p2.touchpoint.eclipse', version: '2.1.500'])
+        dependencies.add( 'p2',[group: 'org.eclipse.platform', name: 'org.eclipse.equinox.p2.touchpoint.natives', version: '1.2.200'])
+        dependencies.add( 'p2',[group: 'org.eclipse.platform', name: 'org.eclipse.equinox.p2.garbagecollector', version: '1.0.300'])
+        dependencies.add( 'p2',[group: 'org.eclipse.platform', name: 'org.eclipse.equinox.p2.metadata.repository', version: '1.2.401'])
+        dependencies.add( 'p2',[group: 'org.eclipse.platform', name: 'org.eclipse.equinox.p2.artifact.repository', version: '1.1.650'])
+        dependencies.add( 'p2',[group: 'org.eclipse.platform', name: 'org.eclipse.equinox.p2.jarprocessor', version: '1.0.500'])
+        dependencies.add( 'p2',[group: 'org.eclipse.platform', name: 'org.eclipse.equinox.p2.updatesite', version: '1.0.600'])
+        dependencies.add( 'p2',[group: 'org.eclipse.equinox.p2', name: 'ql', version: '2.0.100'])
+        // P2 agent simple configurator
+        dependencies.add('p2', [group: 'org.eclipse.platform', name: 'org.eclipse.equinox.simpleconfigurator', version: '1.1.200'])
+        dependencies.add('p2', [group: 'org.eclipse.platform', name: 'org.eclipse.equinox.simpleconfigurator.manipulator', version: '2.0.200'])
+
+        // P2 launcher
+        dependencies.add('p2', [group: 'org.eclipse.platform', name: 'org.eclipse.equinox.launcher', version: '1.5.0'])
     }
 }

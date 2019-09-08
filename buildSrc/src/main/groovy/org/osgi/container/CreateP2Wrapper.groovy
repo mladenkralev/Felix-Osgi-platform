@@ -18,53 +18,70 @@ public class CreateP2Wrapper extends DefaultTask {
     private DefaultRepositoryHandler repositoryHandler;
     public static final String BUNDLES_INFO = "org.eclipse.equinox.simpleconfigurator\\bundles.info"
 
-    public static String CONFIGURATIONS;
-    public static String PLUGINS;
-    public static String CONFIG_INI;
     public static String OUTPUT_FOLDER;
+
+    public static String CONTAINER_CONFIGURATIONS;
+    public static String CONTAINER_PLUGINS;
+    public static String CONTAINER_CONFIG_INI;
+
+    public static String P2_PLUGINS;
+    public static String P2_CONFIG_INI;
 
     CreateP2Wrapper() {
         repositoryHandler = new DefaultRepositoryHandler(project);
         OUTPUT_FOLDER= "$project.buildDir" + File.separator + "p2Container"
-        CONFIGURATIONS = "$OUTPUT_FOLDER" + File.separator + "configuration".toString()
-        PLUGINS = "$OUTPUT_FOLDER" + File.separator + "plugins".toString()
-        CONFIG_INI= "$OUTPUT_FOLDER" + File.separator + "configuration" + File.separator + "config.ini"
+
+        CONTAINER_CONFIGURATIONS = "$OUTPUT_FOLDER" + File.separator + "configuration".toString()
+        CONTAINER_PLUGINS = "$OUTPUT_FOLDER" + File.separator + "plugins".toString()
+        CONTAINER_CONFIG_INI= "$OUTPUT_FOLDER" + File.separator + "configuration" + File.separator + "config.ini"
+
+        P2_CONFIG_INI= "$OUTPUT_FOLDER" + File.separator + "p2" + File.separator + "configuration" + File.separator + "config.ini"
+        P2_PLUGINS = "$OUTPUT_FOLDER" + File.separator + "p2" + File.separator + "plugins".toString()
     }
 
     @TaskAction
     public void executeAction() {
-            CopyUtil.copyConfigurationsToDirectory(project, PLUGINS)
+            CopyUtil.copyContainerConfigurationsToDirectory(project, CONTAINER_PLUGINS)
+            CopyUtil.copyP2ConfigurationsToDirectory(project, P2_PLUGINS)
             createContainerRuntime()
             createBundlesInfo()
     }
 
     void createContainerRuntime() {
         log.info("Creating container ...")
+        // TODO DUPLICATION
+        String containerCoreOsgiBundlePath= new File(CONTAINER_PLUGINS).listFiles().find() {
+            it.name.contains("org.eclipse.osgi_")
+        }.toString()
+        Properties propertiesCore = setDefaultConfigIniProperties(containerCoreOsgiBundlePath)
+        createConfigIniFile(propertiesCore, containerCoreOsgiBundlePath);
 
-        Properties properties = setDefaultConfigIniProperties()
+        // TODO DUPLICATION
+        String p2CoreOsgiBundlePath= new File(P2_PLUGINS).listFiles().find() {
+            it.name.contains("org.eclipse.osgi_")
+        }.toString()
+        Properties propertiesP2 = setDefaultConfigIniProperties(p2CoreOsgiBundlePath)
+        createConfigIniFile(propertiesP2, p2CoreOsgiBundlePath);
 
-        createConfigIniFile(properties)
+        Path containerFolder = Paths.get(OUTPUT_FOLDER)
+        Path osgiCoreBundlePath = getPluginBundlesPath("org.eclipse.osgi_", CONTAINER_PLUGINS)
+        ExecutableCreator.createExecutableOsgiContainer(containerFolder, osgiCoreBundlePath)
 
-        Path destinationFolder = Paths.get(OUTPUT_FOLDER)
-        Path osgiCoreBundlePath = getPluginBundlesPath("org.eclipse.osgi_")
-        println(osgiCoreBundlePath)
-        ExecutableCreator.createExecutableOsgiContainer(destinationFolder, osgiCoreBundlePath)
-
-        Path launcherPath =getPluginBundlesPath("org.eclipse.equinox.launcher")
-        ExecutableCreator.createExecutableP2Provision(destinationFolder, launcherPath)
-        ExecutableCreator.createExecutableDirector(destinationFolder, launcherPath)
+        Path launcherPath = getPluginBundlesPath("org.eclipse.equinox.launcher", P2_PLUGINS)
+        ExecutableCreator.createExecutableP2Provision(containerFolder, launcherPath)
+        ExecutableCreator.createExecutableDirector(containerFolder, launcherPath)
 
         log.info("Container created!")
     }
-
-    private Path getPluginBundlesPath(String bundle) {
-        new File(PLUGINS).listFiles().find() {
+    // TODO can be generalized and code can be redused, see how osgi core bundle is looked
+    private static Path getPluginBundlesPath(String bundle, String folder) {
+        new File(folder).listFiles().find() {
             it.name.contains(bundle)
         }.toPath()
     }
 
-    private void createConfigIniFile(Properties properties) {
-        File configIni = new File(CONFIG_INI)
+    private static void createConfigIniFile(Properties properties, String pathToConfigIni) {
+        File configIni = new File(pathToConfigIni)
 
         configIni.getParentFile().mkdirs();
         if (!configIni.exists()) {
@@ -75,19 +92,17 @@ public class CreateP2Wrapper extends DefaultTask {
         properties.store(outputStream, "This is build generated file.")
     }
 
-    private Properties setDefaultConfigIniProperties() {
+    private Properties setDefaultConfigIniProperties(String osgiBundlePath) {
         String simpleConfiguratorBundle = getSimpleConfiguratorBundlesPath()
 
         Properties properties = new Properties()
         properties.put("osgi.bundles", simpleConfiguratorBundle + "@start")
         properties.put("eclipse.consoleLog", "true")
         properties.put("equinox.use.ds", "true")
-        properties.put("osgi.framework", new File(PLUGINS).listFiles().find() {
-            it.name.contains("org.eclipse.osgi_")
-        }.toString())
+        properties.put("osgi.framework", osgiBundlePath)
 
         properties.put("org.eclipse.equinox.simpleconfigurator.configUrl",
-                "file:" + CONFIGURATIONS + File.separator + BUNDLES_INFO.toString())
+                "file:" + CONTAINER_CONFIGURATIONS + File.separator + BUNDLES_INFO.toString())
         properties
     }
 
@@ -100,14 +115,14 @@ public class CreateP2Wrapper extends DefaultTask {
     }
 
     static void createBundlesInfo() {
-        File bundlesInfo = new File(CONFIGURATIONS + File.separator + BUNDLES_INFO.toString())
+        File bundlesInfo = new File(CONTAINER_CONFIGURATIONS + File.separator + BUNDLES_INFO.toString())
 
         bundlesInfo.getParentFile().mkdirs();
         if (!bundlesInfo.exists()) {
             bundlesInfo.createNewFile();
         }
 
-        addConfigurationInFile(bundlesInfo,PLUGINS)
+        addConfigurationInFile(bundlesInfo,CONTAINER_PLUGINS)
     }
 
     private static addConfigurationInFile(File outputFile, String bundlesFolder) {
@@ -121,6 +136,7 @@ public class CreateP2Wrapper extends DefaultTask {
 
             log.info("Entry jar is: " + it.getAbsolutePath())
             if (!findMatch) {
+                println it.absoluteFile.exists()
                 ZipFile zipFile = new ZipFile(it.path)
 
                 Enumeration<? extends ZipEntry> entries = zipFile.entries();
