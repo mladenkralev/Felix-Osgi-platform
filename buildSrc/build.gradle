@@ -17,7 +17,7 @@ dependencies {
     compile gradleApi()
 }
 
-version = "0.36"
+version = "0.39"
 group = "org.felix.osgi"
 
 pluginBundle {

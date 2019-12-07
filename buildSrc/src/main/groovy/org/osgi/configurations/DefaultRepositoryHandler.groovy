@@ -1,4 +1,4 @@
-package org.osgi.container
+package org.osgi.configurations
 
 import groovy.util.logging.Slf4j
 import org.gradle.api.Project
@@ -7,7 +7,7 @@ import org.gradle.api.Project
 class DefaultRepositoryHandler {
 
     public DefaultRepositoryHandler(Project project) {
-        log.info("Initial setup started ...")
+        log.info("Defining repositories...")
 
         project.repositories {
             mavenCentral()
@@ -23,6 +23,6 @@ class DefaultRepositoryHandler {
             jcenter()
         }
 
-        log.info("Initial setup ended...")
+        log.debug("Defined repositories are: $project.getRepositories()")
     }
 }

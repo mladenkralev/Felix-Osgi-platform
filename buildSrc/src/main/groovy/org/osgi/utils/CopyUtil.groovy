@@ -1,27 +1,22 @@
-package org.osgi.container
+package org.osgi.utils
 
+import groovy.util.logging.Slf4j
 import org.gradle.api.Project;
 
+@Slf4j
 class CopyUtil {
     /**
      * Copy core-ext, kernel, runtime configuration to folder
      * @param folder
      */
-    public static void copyContainerConfigurationsToDirectory(Project project, String folder) {
-        copyConfigurationToLocal(project,"core-ext", folder)
-        renameAndCopyConfigurationToLocal(project,"kernel", folder)
-    }
-    /**
-     * TODO generalize the utill method.
-     * @param project
-     * @param folder
-     */
-    public static void copyP2ConfigurationsToDirectory(Project project, String folder) {
-        copyConfigurationToLocal(project,"p2", folder)
-        renameAndCopyConfigurationToLocal(project,"kernel", folder)
+    public static void copyContainerConfigurationsToDirectory(Project project, String configuration, String folder) {
+        copyConfigurationToLocal(project, configuration, folder)
+        // see renameAndCopyConfigurationToLocal doc, only one bundle has a problem
+        renameAndCopyConfigurationToLocal(project, "kernel", folder)
     }
 
     public static copyConfigurationToLocal(Project project, String configuration, String folder) {
+        log.info("Copy $configuration configurations to $folder")
         project.copy {
             from project.getConfigurations().getByName(configuration)
 
@@ -38,6 +33,7 @@ class CopyUtil {
      * @return
      */
     public static renameAndCopyConfigurationToLocal(Project project, String configuration, String folder) {
+        log.info("Copy $configuration configurations to $folder. Substitute jar's  name with follwoing pattern: first '-' -> '_'")
         project.copy {
             from project.getConfigurations().getByName(configuration)
 
