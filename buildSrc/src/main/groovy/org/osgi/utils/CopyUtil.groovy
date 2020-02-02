@@ -26,7 +26,7 @@ class CopyUtil {
     }
     /**
      * This is needed due the fact, osmorc IDEA plugin needs format org.eclipse.osgi_3.12.50.v0001.jar to create
-     * equinox runtime...
+     * equinox runtime... ( note the underscore )
      * @param project
      * @param configuration
      * @param folder

@@ -4,7 +4,8 @@ import groovy.util.logging.Slf4j
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.osgi.configurations.StaticConfigurationFile
-import org.osgi.tasks.CreateP2WrapperTask
+import org.osgi.tasks.impl.CreateP2WrapperTask
+import org.osgi.tasks.impl.CreateP2AgentTask
 
 /**
  * Created by mladen on 11/18/2017.
@@ -14,16 +15,16 @@ import org.osgi.tasks.CreateP2WrapperTask
 public class RunEquinoxPlugin implements Plugin<Project> {
 
     void apply(Project project) {
+        StaticConfigurationFile.addDependencies(project);
+        log.info("Project properties are: " + project.properties)
 
         project.tasks.create('createP2Wrapper', CreateP2WrapperTask) {
-            println project.properties
-            StaticConfigurationFile.addDependencies(project);
             project.getConfigurations().each { println(it) }
         }.dependsOn("jar")
 
-        project.tasks.create('p2') {
-
-        }.dependsOn('createP2Wrapper')
+        project.tasks.create('createP2Agent', CreateP2AgentTask){
+            project.getConfigurations().each { println(it) }
+        }.mustRunAfter("createP2Wrapper")
     }
 }
 

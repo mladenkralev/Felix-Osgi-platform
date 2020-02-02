@@ -20,7 +20,6 @@ class DefaultRepositoryHandler {
 
             ivy { url = 'http://build.eclipse.org/rt/virgo/ivy/bundles/release' }
             ivy { url = 'http://build.eclipse.org/rt/virgo/ivy/bundles/milestone' }
-            jcenter()
         }
 
         log.debug("Defined repositories are: $project.getRepositories()")

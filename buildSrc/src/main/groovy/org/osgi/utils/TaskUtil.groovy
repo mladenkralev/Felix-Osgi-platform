@@ -1,15 +1,20 @@
 package org.osgi.utils
 
 import groovy.util.logging.Slf4j
+import org.gradle.api.Project
+import java.io.File
 
 @Slf4j
 public class TaskUtil {
     public static final String BUNDLES_INFO = "org.eclipse.equinox.simpleconfigurator\\bundles.info"
 
+    private static Project project;
+
     public static void createOsgiInstance(Project project, String pluginsDirectory, String osgiInstanceConfigIni, String configuration) {
         log.info("Creating web container ...")
+        this.project = project;
 
-        Properties propertiesCore = setDefaultConfigIniProperties(getBundleFromDirectory(pluginsDirectory, "org.eclipse.osgi_"), configuration)
+        Properties propertiesCore = setDefaultConfigIniProperties(FileUtil.getBundleFromDirectory(pluginsDirectory, "org.eclipse.osgi_"), configuration)
         createConfigIniFile(propertiesCore, osgiInstanceConfigIni);
 
         log.info("Container created!")
