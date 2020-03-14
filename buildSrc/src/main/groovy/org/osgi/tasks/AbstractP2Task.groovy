@@ -22,13 +22,14 @@ class AbstractP2Task extends DefaultTask  {
             bundlesInfo.createNewFile();
         }
 
-        addConfigurationInFile(bundlesInfo, pluginsFolder)
+        insertBundlesInBundlesInfo(bundlesInfo, pluginsFolder)
     }
 
-    private static addConfigurationInFile(File outputFile, String bundlesFolder) {
-        def configurationBundles = StringBuilder.newInstance()
+    private static insertBundlesInBundlesInfo(File bundlesInfo, String bundlesFolder) {
+        def configurationBundles = new StringBuilder()
 
         new File(bundlesFolder).eachFile {
+            //exclude source/groovy/gradle
             Pattern p = Pattern.compile("([^a-z]+\\Qsource\\E)|(\\Qgroovy\\E)|([^\\.]\\Qgradle\\E)");
 
             Matcher matcher = p.matcher(it.name);
@@ -69,7 +70,7 @@ class AbstractP2Task extends DefaultTask  {
                 }
             }
         }
-        outputFile.append(configurationBundles.toString())
+        bundlesInfo.append(configurationBundles.toString())
     }
 
     private static String getBundlesInfoLineFor(String symbolicName, String version, String path, boolean isStarted) {

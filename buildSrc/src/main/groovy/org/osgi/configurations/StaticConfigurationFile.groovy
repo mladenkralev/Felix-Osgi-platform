@@ -2,6 +2,20 @@ package org.osgi.configurations
 
 import org.gradle.api.Project
 
+/**
+ * <p>
+ *      Creates non-transitive [kernel, core-ext, p2] configurations Adds hardcoded list of dependencies.
+ * </p>
+ * <br/>
+ * <p>
+ *      The point of non-transitive configuration is
+ *      to have full control of the dependencies that are present in each configuration.
+ * </p>
+ * <ol>
+ *      <li> Container works with kernel and core-ext configurations </li>
+ *      <li> P2 agent works with kernel and p2 configurations  </li>
+ * </ol>
+ */
 class StaticConfigurationFile {
     private static Project project;
 
@@ -69,29 +83,20 @@ class StaticConfigurationFile {
         dependencies.add('core-ext', [group: 'org.eclipse.platform', name: 'org.eclipse.equinox.p2.artifact.repository', version: '1.1.650'])
         dependencies.add('core-ext', [group: 'org.eclipse.platform', name: 'org.eclipse.equinox.p2.jarprocessor', version: '1.0.500'])
         dependencies.add('core-ext', [group: 'org.eclipse.platform', name: 'org.eclipse.equinox.p2.updatesite', version: '1.0.600'])
-        dependencies.add('core-ext', [group: 'org.eclipse.equinox.p2', name: 'ql', version: '2.0.100'])
-
-        dependencies.add('core-ext', [group: 'org.eclipse.platform', name: 'org.eclipse.osgi.compatibility.state', version: '1.0.200'])
 
         dependencies.add('core-ext', [group: 'org.tukaani', name: 'xz', version: '1.5'])
-        dependencies.add('core-ext', [group: 'org.eclipse', name: 'org.sat4j.core', version: '2.3.5.v201308161310'])
-        dependencies.add('core-ext', [group: 'org.eclipse', name: 'org.sat4j.pb', version: '2.3.5.v201308161310'])
+        dependencies.add('core-ext', [group: 'org.ow2.sat4j', name: 'org.ow2.sat4j.core', version: '2.3.5'])
+        dependencies.add('core-ext', [group: 'org.ow2.sat4j', name: 'org.ow2.sat4j.pb', version: '2.3.5'])
 
         dependencies.add('core-ext', [group: 'org.eclipse.platform', name: 'org.eclipse.equinox.frameworkadmin', version: '2.0.300'])
         dependencies.add('core-ext', [group: 'org.eclipse.platform', name: 'org.eclipse.equinox.frameworkadmin.equinox', version: '1.0.700'])
         dependencies.add('core-ext', [group: 'org.eclipse.platform', name: 'org.eclipse.equinox.launcher', version: '1.5.0'])
         dependencies.add('core-ext', [group: 'org.eclipse.platform', name: 'org.eclipse.equinox.util', version: '1.0.500'])
-
-        dependencies.add('core-ext', [group: 'org.eclipse.platform', name: 'org.eclipse.equinox.p2.transport.ecf', version: '1.1.300'])
-        dependencies.add('core-ext', [group: 'org.eclipse.ecf', name: 'org.eclipse.ecf', version: '3.9.0'])
-        dependencies.add('core-ext', [group: 'org.eclipse.ecf', name: 'org.eclipse.ecf.filetransfer', version: '5.0.0.v20130604-1622'])
-        dependencies.add('core-ext', [group: 'org.eclipse.ecf', name: 'org.eclipse.ecf.identity', version: '3.9.0'])
-        dependencies.add('core-ext', [group: 'org.eclipse.ecf', name: 'org.eclipse.ecf.provider.filetransfer', version: '3.2.0.v20130604-1622'])
         dependencies.add('core-ext', [group: 'org.eclipse.platform', name: 'org.eclipse.equinox.concurrent', version: '1.1.100'])
 
         dependencies.add('core-ext', [group: 'org.eclipse.platform', name: 'org.eclipse.core.net.linux.x86_64', version: '1.2.100'])
         dependencies.add('core-ext', [group: 'org.eclipse.platform', name: 'org.eclipse.core.net.win32.x86_64', version: '1.1.100'])
-        dependencies.add('core-ext', [group: 'org.eclipse.core', name: 'org.eclipse.core.net', version: '1.2.0.I20090522-1010'])
+        dependencies.add('core-ext', [group: 'org.eclipse.platform', name: 'org.eclipse.core.net', version: '1.3.0'])
 
         // Extra gson
         dependencies.add('core-ext', [group: 'com.google.code.gson', name: 'gson', version: '2.8.5'])
@@ -165,7 +170,7 @@ class StaticConfigurationFile {
         dependencies.add('p2', [group: 'org.eclipse.platform', name: 'org.eclipse.equinox.p2.artifact.repository', version: '1.1.650'])
         dependencies.add('p2', [group: 'org.eclipse.platform', name: 'org.eclipse.equinox.p2.jarprocessor', version: '1.0.500'])
         dependencies.add('p2', [group: 'org.eclipse.platform', name: 'org.eclipse.equinox.p2.updatesite', version: '1.0.600'])
-        dependencies.add('p2', [group: 'org.eclipse.equinox.p2', name: 'ql', version: '2.0.100'])
+        //dependencies.add('p2', [group: 'org.eclipse.equinox.p2', name: 'ql', version: '2.0.100'])
         // P2 agent simple configurator
         dependencies.add('p2', [group: 'org.eclipse.platform', name: 'org.eclipse.equinox.simpleconfigurator', version: '1.1.200'])
         dependencies.add('p2', [group: 'org.eclipse.platform', name: 'org.eclipse.equinox.simpleconfigurator.manipulator', version: '2.0.200'])
@@ -183,7 +188,11 @@ class StaticConfigurationFile {
         dependencies.add('p2', [group: 'org.eclipse.platform', name: 'org.eclipse.equinox.app', version: '1.3.400'])
         dependencies.add('p2', [group: 'org.eclipse.platform', name: 'org.eclipse.equinox.security', version: '1.2.200'])
         dependencies.add('p2', [group: 'org.tukaani', name: 'xz', version: '1.5'])
-        dependencies.add('p2', [group: 'org.eclipse', name: 'org.sat4j.core', version: '2.3.5.v201308161310'])
-        dependencies.add('p2', [group: 'org.eclipse', name: 'org.sat4j.pb', version: '2.3.5.v201308161310'])
+        dependencies.add('p2', [group: 'org.ow2.sat4j', name: 'org.ow2.sat4j.core', version: '2.3.5'])
+        dependencies.add('p2', [group: 'org.ow2.sat4j', name: 'org.ow2.sat4j.pb', version: '2.3.5'])
+
+//        dependencies.add('p2', [group: 'org.eclipse.platform', name: 'org.eclipse.osgi.compatibility.state', version: '1.0.200'])
+
+        dependencies.add('p2', [group: 'org.eclipse.platform', name: 'org.eclipse.equinox.ds', version: '1.5.0'])
     }
 }

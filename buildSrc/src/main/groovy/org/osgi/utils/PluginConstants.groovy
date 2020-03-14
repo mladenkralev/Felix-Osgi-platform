@@ -11,7 +11,6 @@ public class PluginConstants {
     public static String CONTAINER_BUNDLES
     public static String CONTAINER_CONFIG_INI
 
-
     public static String P2_AGENT_FOLDER
     public static String P2_AGENT_CONFIGURATION
     public static String P2_AGENT_CONFIG_INI
@@ -32,5 +31,9 @@ public class PluginConstants {
         P2_AGENT_CONFIGURATION = P2_AGENT_FOLDER + "configuration"
         P2_AGENT_CONFIG_INI = P2_AGENT_CONFIGURATION + File.separator + "config.ini"
         P2_AGENT_BUNDLES = P2_AGENT_FOLDER + "plugins".toString()
+//
+//        Map dummy = this.class.declaredFields.findAll { !it.synthetic }.collectEntries {
+//            [ (it.name):this."$it.name" ]
+//        }
     }
 }

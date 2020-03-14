@@ -14,7 +14,7 @@ class ExecutableUtil {
 
     static void createExecutableOsgiContainer(Path exeDestinationFolder, String osgiCoreBundlePath) {
         File batFile = createBatFile(exeDestinationFolder, "start.bat")
-        batFile.setText("java -jar $osgiCoreBundlePath -console -configuration configuration".toString())
+        batFile.setText("java -Declipse.ignoreApp=true -Declipse.buildId=abc123 -jar $osgiCoreBundlePath -console -configuration configuration".toString())
     }
 
     static void createExecutableP2Provision(String exeDestinationFolder, String osgiLauncherPath) {

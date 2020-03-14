@@ -37,11 +37,15 @@ test {
     }
 }
 
-test.dependsOn('createP2Wrapper')
+test.dependsOn('createP2Container')
+test.dependsOn('createP2Agent')
 
 ext {
     someOtherProp = 123
 }
+
+sourceCompatibility = 1.11
+targetCompatibility = 1.11
 
 
 

@@ -1,1 +1,1 @@
-java -jar ${launcherPath}org.eclipse.osgi_3.13.200.jar -console -configuration configuration
+## This is overwritten by the plugin functionality. See ExecutableUtil.groovy

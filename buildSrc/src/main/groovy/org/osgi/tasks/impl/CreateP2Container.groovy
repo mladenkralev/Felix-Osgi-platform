@@ -15,13 +15,13 @@ import java.nio.file.Paths
 import static org.osgi.utils.PluginConstants.*
 
 @Slf4j
-public class CreateP2WrapperTask extends AbstractP2Task{
+public class CreateP2Container extends AbstractP2Task{
 
     private DefaultRepositoryHandler repositoryHandler;
 
     private static PluginConstants pluginConstants;
 
-    CreateP2WrapperTask() {
+    CreateP2Container() {
         repositoryHandler = new DefaultRepositoryHandler(project)
         pluginConstants = new PluginConstants("$project.buildDir")
     }
@@ -32,11 +32,10 @@ public class CreateP2WrapperTask extends AbstractP2Task{
 
         //web container
         TaskUtil.createOsgiInstance(project, CONTAINER_BUNDLES, CONTAINER_CONFIG_INI, CONTAINER_CONFIGURATIONS);
+        String osgiSystemBundle = FileUtil.getBundleFromDirectory(CONTAINER_BUNDLES, "org.eclipse.osgi_")
         ExecutableUtil.createExecutableOsgiContainer(Paths.get(CONTAINER_FOLDER),
-                FileUtil.getBundleFromDirectory(CONTAINER_BUNDLES, "org.eclipse.osgi_"))
+                osgiSystemBundle)
 
         createBundlesInfo(CONTAINER_CONFIGURATIONS, CONTAINER_BUNDLES)
     }
-
-
 }

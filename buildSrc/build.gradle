@@ -17,7 +17,7 @@ dependencies {
     compile gradleApi()
 }
 
-version = "0.39"
+version = "0.43"
 group = "org.felix.osgi"
 
 pluginBundle {
@@ -37,3 +37,4 @@ pluginBundle {
 dependencies {
     compile group: 'commons-io', name: 'commons-io', version: '2.6'
 }
+

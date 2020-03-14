@@ -1,14 +1,11 @@
-import groovy.util.GroovyTestCase;
-
-import java.io.File
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths
 import java.util.concurrent.TimeUnit
 import java.util.logging.Logger;
 
-public class P2ExecutableBatchTest extends GroovyTestCase {
-    Logger logger = Logger.getLogger(P2ExecutableBatchTest.class.toString())
+public class P2AgentExecutableBatchTest extends GroovyTestCase {
+    Logger logger = Logger.getLogger(P2AgentExecutableBatchTest.class.toString())
     Path tempDirectoryFile
     Path rootDir
     Path buildFolder
@@ -20,7 +17,7 @@ public class P2ExecutableBatchTest extends GroovyTestCase {
         tempDirectoryFile = Files.createTempDirectory(System.currentTimeMillis().toString())
         rootDir = Paths.get(System.getProperty("user.dir"));
 
-        buildFolderAsString = rootDir.toAbsolutePath().toString() + File.separator + "build" + File.separator + "p2Container" + File.separator + "p2"
+        buildFolderAsString = rootDir.toAbsolutePath().toString() + File.separator + "build" + File.separator + "p2Agent"
         buildFolder = Paths.get(buildFolderAsString);
         assert buildFolder != null
 

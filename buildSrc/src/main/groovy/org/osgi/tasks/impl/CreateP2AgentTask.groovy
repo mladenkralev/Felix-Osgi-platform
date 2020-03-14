@@ -10,8 +10,9 @@ import org.osgi.utils.FileUtil;
 import org.osgi.utils.PluginConstants
 import org.osgi.utils.TaskUtil
 
-import static org.osgi.utils.PluginConstants.*;
+import java.nio.file.Paths
 
+import static org.osgi.utils.PluginConstants.*;
 
 @Slf4j
 public class CreateP2AgentTask extends AbstractP2Task {
@@ -21,7 +22,7 @@ public class CreateP2AgentTask extends AbstractP2Task {
     private static PluginConstants pluginConstants;
 
     CreateP2AgentTask() {
-        log.debug("Entering CreateP2Agent()")
+        log.info("Initiating CreateP2AgentTask task")
         repositoryHandler = new DefaultRepositoryHandler(project)
         pluginConstants = new PluginConstants("$project.buildDir")
     }
@@ -32,9 +33,12 @@ public class CreateP2AgentTask extends AbstractP2Task {
 
         // p2 agent
         TaskUtil.createOsgiInstance(project, P2_AGENT_BUNDLES, P2_AGENT_CONFIG_INI, P2_AGENT_CONFIGURATION);
-        String p2Launcher = FileUtil.getBundleFromDirectory(P2_AGENT_BUNDLES, "org.eclipse.equinox.launcher")
-        ExecutableUtil.createExecutableP2Provision(P2_AGENT_FOLDER, p2Launcher);
-        ExecutableUtil.createExecutableDirector(P2_AGENT_FOLDER, p2Launcher)
+        String equinoxLauncher = FileUtil.getBundleFromDirectory(P2_AGENT_BUNDLES, "org.eclipse.equinox.launcher")
+        String osgiSystemBundle = FileUtil.getBundleFromDirectory(P2_AGENT_BUNDLES, "org.eclipse.osgi_")
+        ExecutableUtil.createExecutableP2Provision(P2_AGENT_FOLDER, equinoxLauncher);
+        ExecutableUtil.createExecutableDirector(P2_AGENT_FOLDER, equinoxLauncher)
+        ExecutableUtil.createExecutableOsgiContainer(Paths.get(P2_AGENT_FOLDER),
+                osgiSystemBundle)
         createBundlesInfo(P2_AGENT_CONFIGURATION, P2_AGENT_BUNDLES)
     }
 }
